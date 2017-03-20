@@ -1,0 +1,15 @@
+BIN=./node_modules/.bin
+
+all: compile-js compile-css
+
+watch:
+	@$(BIN)/chokidar "*.json" "*.js" "src/*.js" "*.css" -c "make"
+
+compile-js:
+	@echo "  >  Compiling JS..."
+	@$(BIN)/browserify popup.js -o build/popup.js
+	@$(BIN)/browserify background.js -o build/background.js
+
+compile-css:
+	@echo "  >  Compiling CSS..."
+	@cat *.css > build/dist.css
