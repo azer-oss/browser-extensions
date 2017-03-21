@@ -7,7 +7,6 @@ watch:
 
 compile-js:
 	@echo "  >  Compiling JS..."
-	@$(BIN)/browserify popup.js -o build/popup.js
 	@$(BIN)/browserify background.js -o build/background.js
 
 compile-css:

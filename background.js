@@ -9,8 +9,6 @@ tabs.onUpdated(icons.update)
 chrome.browserAction.onClicked.addListener(onClick)
 
 function onClick (tab) {
-  console.log('onclick ', tab.url)
-
   login((error, auth) => {
     if (error || !auth) chrome.tabs.create({ url: config.host() + '/login?from=extension&like=' + escape(tab.url) });
 
