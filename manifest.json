@@ -7,6 +7,20 @@
     "default_icon": "images/heart-icon.png",
     "default_title": "Like This Page"
   },
+  "externally_connectable": {
+    "matches": [
+      "http://192.168.1.7/*",
+      "*://getkozmos.com/*"
+    ]
+  },
+  "content_scripts": [{
+    "matches": [
+      "http://192.168.1.7/*",
+      "http://getkozmos.com/*",
+      "http://*.getkozmos.com/*"
+    ],
+    "js": ["build/content.js"]
+  }],
   "background": {
     "scripts": ["build/background.js"]
   },

@@ -11,5 +11,9 @@
   "devDependencies": {
     "browserify": "^14.1.0",
     "chokidar-cli": "^1.2.0"
+  },
+  "dependencies": {
+    "db": "github:kaktus/db",
+    "limited-parallel-loop": "github:azer/limited-parallel-loop"
   }
 }
