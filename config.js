@@ -3,5 +3,5 @@ module.exports = {
 }
 
 function host () {
-  return 'http://localhost:9000';
+  return 'http://getkozmos.com';
 }

@@ -1,6 +1,6 @@
 BIN=./node_modules/.bin
 
-all: compile-js compile-css
+all: compile-js
 
 watch:
 	@$(BIN)/chokidar "*.json" "*.js" "src/*.js" "*.css" -c "make"
