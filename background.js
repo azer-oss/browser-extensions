@@ -7,6 +7,11 @@ const config = require("./config")
 tabs.onUpdated(icons.update)
 
 chrome.browserAction.onClicked.addListener(onClick)
+chrome.runtime.onInstalled.addListener(function(details){
+  if(details.reason == "install"){
+    console.log("This is a first install!");
+  }
+});
 
 function onClick (tab) {
   login((error, auth) => {
