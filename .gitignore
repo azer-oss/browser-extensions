@@ -1,2 +1,3 @@
 dist/background.js
+.DS_Store
 node_modules
