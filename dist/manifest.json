@@ -1,19 +1,23 @@
 {
   "manifest_version": 2,
   "name": "Kozmos",
-  "description": "The simpliest way to bookmark pages, and find them when you need.",
+  "description": "The simpliest way to keep your bookmarks.",
   "version": "1.0",
   "browser_action": {
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos"
   },
   "background": {
-    "scripts": ["build/background.js"]
+    "scripts": ["background.js"]
   },
   "permissions": [
     "activeTab",
     "tabs",
     "cookies",
     "http://*/*"
-  ]
+  ],
+  "icons": { "16": "images/icon16.png",
+             "48": "images/icon48.png",
+             "128": "images/icon128.png"
+  }
 }

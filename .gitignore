@@ -1,3 +1,2 @@
-build/*.js
-build/*.css
+dist/background.js
 node_modules
