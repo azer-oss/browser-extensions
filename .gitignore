@@ -1,6 +1,8 @@
-dist/background.js
 .DS_Store
 node_modules
 .env
-dist/web-ext-artifacts
-dist/.web-extension-id
+chrome-dist/web-ext-artifacts
+chrome-dist/.web-extension-id
+chrome-dist/background.js
+kozmos.safariextension/global.js
+kozmos.safariextension/injected.js

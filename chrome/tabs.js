@@ -1,6 +1,11 @@
 module.exports = {
+  create,
   current,
   onUpdated
+}
+
+function create (url) {
+  chrome.tabs.create({ url: url })
 }
 
 function current (callback) {
