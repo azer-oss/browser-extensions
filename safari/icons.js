@@ -44,9 +44,13 @@ function setAsLoading() {
 }
 
 function setIcon (src) {
-  safari.extension.toolbarItems[0].image = src
+  safari.extension.toolbarItems.forEach(function (toolbar) {
+    toolbar.image = src
+  })
 }
 
 function setTooltip (text) {
-  safari.extension.toolbarItems[0].toolTip = text
+  safari.extension.toolbarItems.forEach(function (toolbar) {
+    toolbar.toolTip = text
+  })
 }
