@@ -14,3 +14,4 @@ compile:
 sign-for-firefox: compile
 	@cd dist && web-ext sign --api-key=$(MOZ_API_KEY) --api-secret=$(MOZ_API_SECRET)
 	@mv dist/web-ext-artifacts/* .
+	@rm -rf dist/web-ext-artifacts
