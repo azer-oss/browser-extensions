@@ -9,7 +9,7 @@ compile-chrome:
 	@echo "  >  Compiling Chrome..."
 	@$(BIN)/browserify chrome/background.js -o chrome-dist/background.js
 
-sign-for-firefox: compile-chrome
+compile-firefox: compile-chrome
 	@cd chrome-dist && web-ext sign --api-key=$(MOZ_API_KEY) --api-secret=$(MOZ_API_SECRET)
 	@mv chrome-dist/web-ext-artifacts/* .
 	@rm -rf chrome-dist/web-ext-artifacts
