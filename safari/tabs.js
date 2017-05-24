@@ -1,3 +1,5 @@
+var lastURL = ''
+
 module.exports = {
   create,
   current,
@@ -13,5 +15,20 @@ function current () {
 }
 
 function onUpdated (callback) {
-  safari.application.addEventListener("activate", callback, true);
+  safari.application.addEventListener("activate", onchange, true);
+  safari.application.addEventListener("beforeNavigate", onchange, true);
+  safari.application.addEventListener("navigate", onchange, true);
+
+  check()
+
+  function onchange (event) {
+    if (current().url === lastURL) return
+    lastURL = current().url
+    callback()
+  }
+
+  function check () {
+    onchange()
+    setTimeout(check, 500)
+  }
 }

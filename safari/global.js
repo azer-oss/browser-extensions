@@ -15,7 +15,6 @@ safari.application.addEventListener("command", function (event) {
   likes.isLiked(url, function (liked) {
     likes[liked ? "unlike" : "like"](url, function (err) {
       if (err) return console.error(err)
-
       if (liked) icons.setAsNotLiked()
       else icons.setAsLiked()
     })
@@ -24,7 +23,10 @@ safari.application.addEventListener("command", function (event) {
 
 safari.application.addEventListener("message", function (event) {
   if (event.name === 'kozmos-token') {
-    console.log('=>', event.message)
     localStorage['token'] = event.message
+  }
+
+  if (event.name === 'kozmos-update-icon') {
+    icons.onCurrentURLUpdated({ target: { url: event.message } })
   }
 });

@@ -11,5 +11,8 @@
   "devDependencies": {
     "browserify": "^14.1.0",
     "chokidar-cli": "^1.2.0"
+  },
+  "dependencies": {
+    "debounce-fn": "github:azer/debounce-fn"
   }
 }

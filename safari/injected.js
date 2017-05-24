@@ -10,5 +10,5 @@ function sendToken () {
 }
 
 function url () {
-  return window.location.url
+  return window.location.href
 }
