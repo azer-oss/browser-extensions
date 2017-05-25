@@ -1,4 +1,4 @@
-## kozmos-chrome
+## browser-extensions
 
 This is the source code of [Kozmos](http://getkozmos.com)' browser extensions. 
 
