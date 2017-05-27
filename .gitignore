@@ -4,5 +4,9 @@ node_modules
 chrome-dist/web-ext-artifacts
 chrome-dist/.web-extension-id
 chrome-dist/background.js
+chrome-dist/content.js
+dist
 kozmos.safariextension/global.js
 kozmos.safariextension/injected.js
+npm-debug.log
+*.xpi

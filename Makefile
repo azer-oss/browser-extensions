@@ -8,6 +8,7 @@ watch-chrome: compile-chrome
 compile-chrome:
 	@echo "  >  Compiling Chrome..."
 	@$(BIN)/browserify chrome/background.js -o chrome-dist/background.js
+	@$(BIN)/browserify chrome/content.js -o chrome-dist/content.js
 
 compile-firefox: compile-chrome
 	@cd chrome-dist && web-ext sign --api-key=$(MOZ_API_KEY) --api-secret=$(MOZ_API_SECRET)

@@ -14,9 +14,9 @@ function listenForChanges() {
 function onTabsUpdated() {
   setAsLoading()
 
-  tabs.current((error, url) => {
+  tabs.current((error, tab) => {
     if (error) return console.error(error)
-    likes.isLiked(url, set)
+    likes.isLiked(tab.url, set)
   })
 }
 

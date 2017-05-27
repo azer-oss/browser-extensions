@@ -10,7 +10,7 @@ function create (url) {
 
 function current (callback) {
   chrome.tabs.query({ 'active': true }, function (tabs) {
-    callback(undefined, tabs[0].url);
+    callback(undefined, tabs[0]);
   });
 }
 
