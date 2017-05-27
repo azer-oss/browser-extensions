@@ -30,7 +30,7 @@
 				<key>Image</key>
 				<string>images/heart-icon.png</string>
 				<key>Include By Default</key>
-				<false/>
+				<true/>
 				<key>Label</key>
 				<string>Kozmos</string>
 				<key>Tool Tip</key>
