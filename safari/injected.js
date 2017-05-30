@@ -1,9 +1,11 @@
 const config = require("../config")
 
 addEventListener("message", function (e) {
-  if (e.data.from !== 'kozmos-web') return;
-  if (e.data.content === 'ping') send(e.data.id, 'pong')
-  if (e.data.content === 'bookmarks') send (e.data.id, [])
+  console.log('message to injected', e.data, config.host)
+
+  if (e.data.from !== 'kozmos-web' || e.data.content === undefined) return;
+  if (e.data.content === 'ping' || e.data.content.ping) send(e.data.id, 'pong')
+  if (e.data.content.task === 'bookmarks') send (e.data.id, [])
 })
 
 
