@@ -1,0 +1,47 @@
+.urlicon {
+  width: 80px;
+  height: 70px;
+  float: left;
+  overflow: hidden;
+  margin: 10px 5px;
+  position: relative;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.urlicon .image {
+  position: absolute;
+  width: 100%;
+  height: 40px;
+  background: no-repeat center;
+  background-size: contain;
+  top: 10px;
+}
+
+.urlicon .title {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  text-align: center;
+  color: #555;
+  font: 400 12px "San Francisco", "Open Sans", Times, "Verdana", sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  -webkit-transition: color 0.1s ease-in;
+  -moz-transition: color 0.1s ease-in;
+  -o-transition: color 0.1s ease-in;
+  transition: color 0.1s ease-in;
+}
+
+.urlicon .default-image {
+  width: 35px;
+  height: auto;
+  margin: 10px 22px;
+  opacity: 0.5;
+}
+
+.urlicon:hover .title {
+  color: #222;
+}

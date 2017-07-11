@@ -1,0 +1,13 @@
+chrome
+chrome-dist
+config.json
+dist
+.env
+.env.sample
+*.xpi
+kozmos.safariextension
+Makefile
+newtab
+README.md
+safari
+yarn.lock

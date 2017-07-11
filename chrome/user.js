@@ -1,11 +1,6 @@
-const read = require("./cookies").read
+import { read } from './cookies'
 
-module.exports = {
-  auth: auth,
-  login: login
-}
-
-function auth (callback) {
+export function auth (callback) {
   if (localStorage['token']) {
     return callback()
   }
@@ -13,7 +8,7 @@ function auth (callback) {
   login(callback)
 }
 
-function login (callback) {
+export function login (callback) {
   const result = {};
   read("token", (error, value) => {
     if (!value) return callback(new Error('Token isn\'t set'))

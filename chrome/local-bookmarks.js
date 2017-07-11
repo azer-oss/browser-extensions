@@ -1,8 +1,4 @@
-module.exports = {
-  all: all
-}
-
-function all (callback) {
+export function all (callback) {
   chrome.bookmarks.getTree(function (results) {
     callback(undefined, flatten(results).filter(isBookmark))
   })

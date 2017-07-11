@@ -7,6 +7,9 @@
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos"
   },
+  "chrome_url_overrides" : {
+    "newtab": "newtab.html"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -28,6 +31,8 @@
     "tabs",
     "cookies",
     "bookmarks",
+    "topSites",
+    "history",
     "*://*.getkozmos.com/*"
   ],
   "icons": { "16": "images/icon16.png",

@@ -1,0 +1,36 @@
+.search-input {
+  width: 430px;
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+.search-input .logo {
+  width: 80px;
+  height: 80px;
+  background: url(./images/icon128.png) no-repeat center;
+  background-size: cover;
+  margin: 0 auto 15px auto;
+}
+
+.search-input .input {
+  width: calc(100% - 45px);
+  height: 22px;
+  color: #333;
+  padding: 10px 10px 10px 35px;
+  font: 400 18px "San Francisco", "Open Sans", Times, "Verdana", sans-serif;
+  outline: none;
+  border: 0;
+  background: transparent;
+}
+
+.search-input ::-webkit-input-placeholder { /* Chrome */
+  color: #aaa;
+}
+
+.search-input .icon {
+  position: absolute;
+  margin: 11px 0 0 8px;
+  width: 20px;
+  height: auto;
+  opacity: 0.7;
+}
