@@ -4,7 +4,7 @@ import Messaging from "./messaging"
 import SearchInput from "./search-input"
 import debounce from "debounce-fn"
 
-export default class Bookmarks extends Component {
+export default class Search extends Component {
   constructor(props) {
     super(props)
     this.messages = new Messaging()
@@ -72,8 +72,6 @@ export default class Bookmarks extends Component {
   }
 
   render() {
-    if (!this.props.open) return
-
     return (
       <Content wallpaper={this.props.wallpaper}>
         <div className="bookmarks">

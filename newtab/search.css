@@ -1,18 +1,4 @@
-.close-button {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 15px;
-  opacity: 0.5;
-  cursor: pointer;
-  z-index: 999;
-}
-
-.bookmarks .close-button:hover {
-  opacity: 1;
-}
-
-.bookmarks .urls, .bookmarks .loading {
+/*.search .urls, .bookmarks .loading {
   margin: 20px auto;
   width: 450px;
   position: relative;
@@ -64,3 +50,4 @@
 
 .bookmarks .more-results-button:hover {
 }
+*/
