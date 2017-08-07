@@ -1,9 +1,8 @@
 import * as localBookmarks from "./local-bookmarks"
 import RemoteTasks from "../lib/remote-tasks"
 import tabs from "./tabs"
-import api from "../lib/api"
-import { auth } from "./user"
-
+import * as db from "../lib/db"
+import { get as auth } from "./token"
 
 export default class BackgroundTasks extends RemoteTasks {
   constructor() {
@@ -13,7 +12,8 @@ export default class BackgroundTasks extends RemoteTasks {
       'get-local-bookmarks': this.getLocalBookmarks,
       'get-recent-bookmarks': this.getRecentBookmarks,
       'search-bookmarks': this.searchBookmarks,
-      'is-logged-in': this.isLoggedIn
+      'is-logged-in': this.isLoggedIn,
+      'set-token': this.setToken
     })
   }
 
@@ -43,8 +43,13 @@ export default class BackgroundTasks extends RemoteTasks {
     })
   }
 
-  isLoggedIn() {
+  isLoggedIn(msg) {
     this.reply(msg, { isLoggedIn: !!localStorage['token'] })
+  }
+
+  setToken(msg) {
+    localStorage['token'] = msg.content.token
+    db.setToken(msg.content.token)
   }
 
   listenForMessages() {

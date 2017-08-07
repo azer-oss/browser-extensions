@@ -14,6 +14,7 @@ export default class ContentMessageProxy extends Messaging {
 
   onReceive(msg) {
     if (msg.proxy === this.name) return
+    if (msg.to === this.name) return super.onReceive(msg)
     this.sendMessage(msg)
   }
 
@@ -28,9 +29,13 @@ export default class ContentMessageProxy extends Messaging {
   sendMessage(msg) {
     if (msg.to === 'kozmos:web') return this.sendMessageToWeb(msg)
     if (msg.to === 'kozmos:background') return this.sendMessageToBackground(msg)
+
+    throw new Error('Message missing valid `to` field`')
   }
 
-  send (msg) {
+  send (msg, callback) {
+    console.log('send ', msg)
+    if (msg.from === this.name) return super.send(msg, callback)
     msg.proxy = this.name
     this.sendMessage(msg)
   }

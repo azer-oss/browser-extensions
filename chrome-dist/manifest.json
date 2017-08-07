@@ -7,9 +7,6 @@
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos"
   },
-  "chrome_url_overrides" : {
-    "newtab": "newtab.html"
-  },
   "content_scripts": [
     {
       "matches": [
@@ -17,7 +14,8 @@
         "http://getkozmos.com/*",
         "http://*.getkozmos.com/*",
         "https://getkozmos.com/*",
-        "https://*.getkozmos.com/*"
+        "https://*.getkozmos.com/*",
+        "http://localhost:9000/*"
       ],
       "all_frames": true,
       "js": ["content.js"]
@@ -33,7 +31,8 @@
     "bookmarks",
     "topSites",
     "history",
-    "*://*.getkozmos.com/*"
+    "*://*.getkozmos.com/*",
+    "http://localhost:9000/*"
   ],
   "icons": { "16": "images/icon16.png",
              "48": "images/icon48.png",

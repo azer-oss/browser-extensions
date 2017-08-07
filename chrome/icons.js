@@ -1,4 +1,3 @@
-const api = require("../lib/api")
 const likes = require("../lib/likes")
 const tabs = require("./tabs")
 
@@ -34,6 +33,6 @@ function setAsLoading () {
   });
 
   chrome.browserAction.setTitle({
-    title: "Connecting to Kozmos..."
+    title: "Please wait..."
   });
 }
