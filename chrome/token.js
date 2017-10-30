@@ -12,13 +12,13 @@ export function readFromCookie (callback) {
   const result = {};
 
   read("token", (error, token) => {
-    if (!value) return callback(new Error('Token isn\'t set'))
+    if (!token) return callback(new Error('Token isn\'t set'))
 
     localStorage['token'] = token
 
     read("name", (error, name) => {
-      if (!value) return callback(new Error('Name isn\'t set'))
-      result.name = value;
+      if (!name) return callback(new Error('Name isn\'t set'))
+      result.name = name;
 
       localStorage['name'] = name
 

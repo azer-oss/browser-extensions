@@ -4,7 +4,6 @@ import ContentMessageProxy from './content-message-proxy'
 // sends them to background.
 const proxy = new ContentMessageProxy()
 
-// Send most up-to-date token to the extension.
 proxy.send({
   'from': 'kozmos:content-message-proxy',
   'to': 'kozmos:background',
