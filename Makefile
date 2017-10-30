@@ -39,3 +39,6 @@ compile-newtab-html:
 	@cp newtab/header.html chrome-dist/newtab.html
 	@cat newtab/*.css | $(BIN)/postcss --no-map -u postcss-clean >> chrome-dist/newtab.html
 	@cat newtab/footer.html >> chrome-dist/newtab.html
+
+zip-chrome:
+	@zip -r chrome-dist.zip chrome-dist
