@@ -1,7 +1,10 @@
 import ContentMessageProxy from './content-message-proxy'
+
+// Initialize a message proxy. This simply takes messages from the web page,
+// sends them to background.
 const proxy = new ContentMessageProxy()
 
-console.log('send message')
+// Send most up-to-date token to the extension.
 proxy.send({
   'from': 'kozmos:content-message-proxy',
   'to': 'kozmos:background',

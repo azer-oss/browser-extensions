@@ -34,7 +34,6 @@ export default class ContentMessageProxy extends Messaging {
   }
 
   send (msg, callback) {
-    console.log('send ', msg)
     if (msg.from === this.name) return super.send(msg, callback)
     msg.proxy = this.name
     this.sendMessage(msg)

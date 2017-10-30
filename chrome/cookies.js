@@ -7,7 +7,7 @@ export function onChange (name, callback) {
 }
 
 export function read (name, callback) {
-  chrome.cookies.get({ url: 'http://localhost:9000/', "name": name }, function (cookie) {
+  chrome.cookies.get({ url: host, "name": name }, function (cookie) {
     callback(undefined, cookie && cookie.value)
   })
 }
