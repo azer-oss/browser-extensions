@@ -10,4 +10,5 @@ kozmos.safariextension/global.js
 kozmos.safariextension/injected.js
 npm-debug.log
 *.xpi
+*.zip
 package-lock.json
