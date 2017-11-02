@@ -24,11 +24,26 @@ function onClick (tab) {
     db.setToken(localStorage['token'])
 
     likes.isLiked(tab.url, liked => {
-      likes[liked ? "unlike" : "like"](tab.url, err => {
-        if (err) return console.error(err)
-        icons.set(!liked)
-      })
+      if (!liked) {
+        like(tab.url, tab.title)
+      } else {
+        unlike(tab.url)
+      }
     })
+  })
+}
+
+function like (url, title) {
+  likes.like(url, title, err => {
+    if (err) return console.error('Can not like: %s', err.message)
+    icons.set(true)
+  })
+}
+
+function unlike (url, title) {
+  likes.unlike(url, err => {
+    if (err) return console.error('Can not unlike: %s', err.message)
+    icons.set(false)
   })
 }
 

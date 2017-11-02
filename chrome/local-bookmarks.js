@@ -5,30 +5,39 @@ export function all (callback) {
 }
 
 function isBookmark (row) {
-  return typeof row[0] !== 'undefined' && row[0].length > 0
+  return row.url && row.url.length > 0
 }
 
-function flatten (list, result) {
+function flatten (list, result, map) {
   if(!Array.isArray(list)) return list;
 
   var i = -1;
   var len = list.length;
 
   result || (result = []);
+  map || (map = {})
 
   while (++i < len) {
     if (Array.isArray(list[i])) {
-      flatten(list[i], result)
+      flatten(list[i], result, map)
       continue
     }
 
     if (Array.isArray(list[i].children)) {
-      flatten(list[i].children, result)
+      flatten(list[i].children, result, map)
       continue
     }
 
     if (list[i].url && list[i].url.indexOf('http') === 0) {
-      result.push([list[i].url, String(Math.floor(list[i].dateAdded / 1000))]);
+      if (map[list[i].url]) continue
+
+      map[list[i].url] = true
+
+      result.push({
+        title: list[i].title,
+        url: list[i].url,
+        addedAt: list[i].dateAdded
+      })
     }
   }
 

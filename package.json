@@ -21,7 +21,8 @@
     "debounce-fn": "azer/debounce-fn",
     "img": "npm-dom/img",
     "preact": "^8.1.0",
-    "title-from-url": "azer/title-from-url"
+    "title-from-url": "azer/title-from-url",
+    "urls": "github:kaktus/urls"
   },
   "browserify": {
     "transform": [
