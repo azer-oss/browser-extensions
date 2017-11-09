@@ -10,6 +10,9 @@ compile-chrome:
 	@$(BIN)/browserify chrome/background.js -o chrome-dist/background.js
 	@$(BIN)/browserify chrome/content.js -o chrome-dist/content.js
 
+zip-chrome:
+	@zip -r chrome-dist.zip chrome-dist
+
 compile-firefox: compile-chrome
 	@cd chrome-dist && web-ext sign --api-key=$(MOZ_API_KEY) --api-secret=$(MOZ_API_SECRET)
 	@mv chrome-dist/web-ext-artifacts/* .
@@ -40,5 +43,20 @@ compile-newtab-html:
 	@cat newtab/*.css | $(BIN)/postcss --no-map -u postcss-clean >> chrome-dist/newtab.html
 	@cat newtab/footer.html >> chrome-dist/newtab.html
 
-zip-chrome:
-	@zip -r chrome-dist.zip chrome-dist
+
+watch-popup: compile-popup
+	@$(BIN)/chokidar "popup/*.js" "lib/*.js" "popup/*.json" "popup/*.css" "popup/*.html" \
+		-c 'if [[ {path} == *.js ]]; then make compile-popup-js; elif [[ {path} == *.json ]]; then make compile-popup-js; else; make compile-popup-html; fi'
+
+compile-popup: compile-popup-js compile-popup-html
+
+compile-popup-js:
+	@echo "Compiling chrome-dist/popup.js"
+	@$(BIN)/browserify --debug popup/popup.js > chrome-dist/popup.js
+
+compile-popup-html:
+	@echo "Compiling chrome-dist/popup.html"
+	@echo "" > chrome-dist/popup.html
+	@cp popup/header.html chrome-dist/popup.html
+	@cat popup/*.css | $(BIN)/postcss --no-map -u postcss-clean >> chrome-dist/popup.html
+	@cat popup/footer.html >> chrome-dist/popup.html

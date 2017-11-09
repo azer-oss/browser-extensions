@@ -1,7 +1,8 @@
 import * as localBookmarks from "./local-bookmarks"
 import RemoteTasks from "../lib/remote-tasks"
 import tabs from "./tabs"
-import * as db from "../lib/db"
+import urls from "urls"
+import { db } from "../lib/db"
 import { get as auth } from "./token"
 
 export default class BackgroundTasks extends RemoteTasks {
@@ -13,7 +14,38 @@ export default class BackgroundTasks extends RemoteTasks {
       'get-recent-bookmarks': this.getRecentBookmarks,
       'search-bookmarks': this.searchBookmarks,
       'is-logged-in': this.isLoggedIn,
-      'set-token': this.setToken
+      'set-token': this.setToken,
+      'like': this.like,
+      'unlike': this.unlike,
+      'get-like': this.getLike
+    })
+  }
+
+  getLike(msg) {
+    if (!msg.content.url) return this.reply(msg, { like: null })
+
+    db.likes.get(urls.clean(msg.content.url), (err, row) => {
+      if (row) return this.reply(msg, { like: row })
+
+      db.likes.get(msg.content.url, (err, row) => {
+        return this.reply(msg, { like: row })
+      })
+    })
+  }
+
+  like(msg) {
+    db.likes.like(msg.content.url, msg.content.title, (err) => {
+      if (err) return this.reply(msg, { error: err })
+
+      db.likes.get(urls.clean(msg.content.url), (err, row) => {
+        if (row) return this.reply(msg, { like: row })
+      })
+    })
+  }
+
+  unlike(msg) {
+    db.likes.unlike(urls.clean(msg.content.url), err => {
+      return this.reply(msg, { error: err })
     })
   }
 
@@ -57,6 +89,11 @@ export default class BackgroundTasks extends RemoteTasks {
   }
 
   sendMessage(msg) {
+    if (msg.to === 'kozmos:popup') {
+      return chrome.runtime.sendMessage(msg)
+    }
+
+
     tabs.current((err, tab) => {
       if (err) throw err
 
