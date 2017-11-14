@@ -1,6 +1,9 @@
+.buttons {
+  text-align: center;
+}
+
 .button {
-  display: block;
-  width: 44px;
+  display: inline-block;
   margin: 0 auto;
   background: #666;
   color: #fff;

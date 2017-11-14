@@ -2,7 +2,7 @@ import * as localBookmarks from "./local-bookmarks"
 import RemoteTasks from "../lib/remote-tasks"
 import tabs from "./tabs"
 import urls from "urls"
-import { db } from "../lib/db"
+import { db, onError, onPostUpdates, onReceiveUpdates } from "../lib/db"
 import { get as auth } from "./token"
 
 export default class BackgroundTasks extends RemoteTasks {
@@ -19,6 +19,13 @@ export default class BackgroundTasks extends RemoteTasks {
       'unlike': this.unlike,
       'get-like': this.getLike
     })
+
+    onError((err, action) => {
+      console.log('Database error during %s: %s', action, err)
+    })
+
+    onPostUpdates(() => this.lastPostedUpdatesAt = Date.now())
+    onReceiveUpdates(() => this.lastReceivedUpdatesAt = Date.now())
   }
 
   getLike(msg) {

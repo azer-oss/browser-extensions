@@ -16,9 +16,9 @@
 }
 
 .input input {
-  width: calc(100% - 55px);
+  width: calc(100% - 45px);
   border: 0;
-  padding: 10px 15px 10px 40px;
+  padding: 10px 5px 10px 40px;
   background: transparent;
   outline: none;
   font: 14px/1.3 "Open Sans", sans-serif;

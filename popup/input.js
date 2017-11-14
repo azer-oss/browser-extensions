@@ -41,25 +41,31 @@ export default class Input extends Component {
   }
 
   onKeyUp(e) {
+    const value = e.target.value;
     this.onChange(e)
 
-    if (e.keyCode === 27 && this.props.onPressEsc) {
-      return this.props.onPressEsc(e)
+    if (e.keyCode === 27) {
+      this.setState({ value: "" })
+
+      if (this.props.onPressEsc) {
+        return this.props.onPressEsc(value)
+      }
     }
 
     if (e.keyCode === 13 && this.props.onPressEnter) {
-      return this.props.onPressEnter(e)
+      this.setState({ value: "" })
+      return this.props.onPressEnter(value)
     }
   }
 
   render() {
     return (
       <div className="input">
-        {this.props.icon ? <Icon name={this.props.icon} /> : null}
+        {this.props.icon ? <Icon name={this.props.icon} stroke={this.props.iconStroke} /> : null}
         <input type="text/css"
                placeholder={this.state.placeholder}
                onChange={(e) => this.onChange(e)}
-               onKeyUp={(e) => this.props.onKeyUp(e)}
+               onKeyUp={(e) => this.onKeyUp(e)}
                onFocus={(e) => this.onFocus(e)}
                onBlur={(e) => this.onBlur(e)}
                value={this.state.value}

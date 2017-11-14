@@ -2,7 +2,6 @@ import { h, Component, render } from "preact"
 import tabs from "../chrome/tabs"
 import Messaging from "./messaging"
 import Icon from "./icon"
-
 import Dialog from "./dialog"
 
 class Popup extends Component {
@@ -66,8 +65,6 @@ class Popup extends Component {
 
   unlike() {
     this.messages.send({ task: 'unlike', url: this.state.url }, resp => {
-      console.log('unliked', resp)
-
       if (resp.content.error) return this.setState({ error: resp.content.error })
 
       this.setState({
@@ -86,6 +83,7 @@ class Popup extends Component {
           <a title="Open Kozmos" target="_blank" href="https://getkozmos.com">kozmos</a>
           <Icon name="external" onclick={() => chrome.tabs.create({ url: 'https://getkozmos.com' })} title="Open Your Bookmarks" />
         </h1>
+
         <Dialog isLiked={this.state.isLiked}
                 record={this.state.like}
                 isJustLiked={this.state.isJustLiked}

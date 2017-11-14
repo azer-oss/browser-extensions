@@ -1,0 +1,44 @@
+.tagging-form .tags {
+  margin: 15px;
+}
+
+.tagging-form .tag {
+  font: 14px "Open Sans", sans-serif;
+  display: inline-block;
+  position: relative;
+  padding: 5px 25px 5px 10px;
+  margin: 5px 5px;
+  border: 1px solid #eee;
+  background: #fff;
+  color: #333;
+  border-radius: 3px;
+  line-height: 1.6;
+}
+
+.tagging-form .tag .icon {
+  position: absolute;
+  top: 10px;
+  right: -4px;
+  height: 10px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.tagging-form .tag .icon:hover {
+  color: #000;
+}
+
+.tagging-form h3 {
+  font: 12px "PT Mono", sans-serif;
+  text-transform: uppercase;
+  margin: 10px 0 5px 5px;
+  color: #666;
+}
+
+.tagging-form .loading {
+  font: 12px "PT Mono", sans-serif;
+  text-transform: uppercase;
+  margin: 20px 0;
+  text-align: center;
+  color: #666;
+}

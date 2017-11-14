@@ -1,10 +1,13 @@
 import { h, Component } from "preact"
 import Button from "./button"
-import Icon from "./icon"
-import TaggingForm from "./tagging-form"
-import relativeDate from "relative-date"
+import LikedDialog from "./liked-dialog"
+import Input from "./input"
 
 export default class Dialog extends Component {
+  search(value) {
+    chrome.tabs.create({ url: 'https://getkozmos.com/search?q=' + encodeURI(value) })
+  }
+
   render() {
     if (this.props.isLiked) {
       return this.renderLiked()
@@ -17,32 +20,31 @@ export default class Dialog extends Component {
 
   renderLogin() {
     return (
-      <div className="dialog">
-        login first
+      <div className="dialog login">
+        <div className="desc">
+          Looks like you haven't logged in yet.
+
+        </div>
+        <Button title="Login Kozmos" onClick={() => chrome.tabs.create({ url: 'https://getkozmos.com/login' })}>
+          Login
+        </Button>
       </div>
     )
   }
 
   renderLiked() {
-    const online = navigator.onLine
-
     return (
-      <div className="dialog">
-        {this.props.isJustLiked ? <h2>Done.</h2> : null}
-        <div className="desc">
-          {this.props.isJustLiked ? online ? "You can add some tags, too:" : "You're currently offline. These changes will be sent to Kozmos when you connect to internet." : `You liked this page ${relativeDate(this.props.record.likedAt)}.`}
-        </div>
-        { online ? <TaggingForm like={this.props.record} onAddTag={this.props.onAddTag} onRemoveTag={this.props.onRemoveTag} /> : null}
-        <div className="footer">
-          <Icon name="trash" title="Delete It" onClick={this.props.unlike} />
-        </div>
-      </div>
+      <LikedDialog isJustLiked={this.state.isJustLiked}
+                   like={this.props.record}
+                   unlike={this.props.unlike}
+                   />
     )
   }
 
   renderLike() {
     return (
-      <div className="dialog">
+      <div className="dialog like">
+        <Input onPressEnter={value => this.search(value)} icon="search" placeholder="Search Your Bookmarks" iconStroke="3" />
         <div className="desc">
           You haven't liked this page yet.
         </div>
