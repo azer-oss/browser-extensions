@@ -52,6 +52,14 @@ class Popup extends Component {
   }
 
   onError(error) {
+    const e401 = error.message.indexOf('401') > -1
+    if (e401) {
+      return this.setState({
+        isLoggedIn: false,
+        isLiked: false
+      })
+    }
+
     this.setState({
       error
     })
