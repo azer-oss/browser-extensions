@@ -21,7 +21,7 @@ export default class LikedDialog extends Component {
 
   reset(props) {
     this.setState({
-      isOnline: true || navigator.onLine,
+      isOnline: navigator.onLine,
       isJustLiked: props.isJustLiked,
       like: props.like
     })
