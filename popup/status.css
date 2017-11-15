@@ -1,0 +1,19 @@
+.status {
+  position: absolute;
+  left: 15px;
+  bottom: 11px;
+}
+
+.status .icon {
+  color: #888;
+  height: 21px;
+}
+
+.status .icon-alert {
+  color: #f00;
+  opacity: 0.8;
+}
+
+.status .icon-alert:hover {
+  opacity: 1;
+}

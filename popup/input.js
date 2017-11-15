@@ -56,6 +56,11 @@ export default class Input extends Component {
       this.setState({ value: "" })
       return this.props.onPressEnter(value)
     }
+
+    if (e.keyCode === 188 && this.props.onTypeComma) {
+      this.setState({ value: "" })
+      return this.props.onPressEnter(value)
+    }
   }
 
   render() {

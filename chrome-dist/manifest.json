@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Kozmos - Bookmarking Made Simple",
   "description": "Free, simple and private. Kozmos is the best bookmarking service!",
-  "version": "4.0",
+  "version": "4.1",
   "browser_action": {
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos",
@@ -14,8 +14,7 @@
         "http://getkozmos.com/*",
         "http://*.getkozmos.com/*",
         "https://getkozmos.com/*",
-        "https://*.getkozmos.com/*",
-        "http://localhost:9000/*"
+        "https://*.getkozmos.com/*"
       ],
       "all_frames": true,
       "js": ["content.js"]
@@ -31,8 +30,7 @@
     "bookmarks",
     "topSites",
     "history",
-    "*://*.getkozmos.com/*",
-    "http://localhost:9000/*"
+    "*://*.getkozmos.com/*"
   ],
   "icons": { "16": "images/icon16.png",
              "48": "images/icon48.png",

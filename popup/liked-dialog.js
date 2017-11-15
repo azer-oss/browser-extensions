@@ -10,8 +10,13 @@ export default class LikedDialog extends Component {
   }
 
   componentWillReceiveProps(props) {
-    super.componentWillReceiveProps(props)
-    this.reset(props)
+    if (this.props.like.url !== props.like.url) {
+      this.setState({
+        isLoading: true,
+        tags: []
+      })
+      this.load()
+    }
   }
 
   reset(props) {
@@ -54,7 +59,14 @@ export default class LikedDialog extends Component {
         <div className="desc">
           {this.props.isJustLiked ? "You can add some tags, too:" :  this.renderLikedAgo()}
         </div>
-        <TaggingForm like={this.props.like} onAddTag={this.props.onAddTag} onRemoveTag={this.props.onRemoveTag} />
+        <TaggingForm like={this.props.like}
+                     onAddTag={this.props.onAddTag}
+                     onRemoveTag={this.props.onRemoveTag}
+                     onStartLoading={this.props.onStartLoading}
+                     onStopLoading={this.props.onStopLoading}
+                     onSync={this.props.onSync}
+                     onError={this.props.onError}
+                     />
       </div>
     )
   }

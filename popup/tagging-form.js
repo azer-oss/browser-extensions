@@ -7,21 +7,29 @@ export default class TaggingForm extends Component {
   constructor(props) {
     super(props)
     this.load()
-  }
-
-  componentWillReceiveProps(props) {
-    super.componentWillReceiveProps(props)
-    this.load()
-  }
-
-  load() {
     this.setState({
       isLoading: true,
       tags: []
     })
+  }
+
+  componentWillReceiveProps(props) {
+    if (this.props.like.url !== props.like.url) {
+      this.setState({
+        isLoading: true,
+        tags: []
+      })
+      this.load()
+    }
+  }
+
+  load() {
+    this.props.onStartLoading()
 
     api.post("/api/like-tags", { "url": this.props.like.url }, (err, resp) => {
-      if (err) return this.setState({ error: err, isLoading: false })
+      this.props.onStopLoading()
+
+      if (err) return this.props.onError(err)
 
       this.setState({
         tags: resp.tags,
@@ -31,48 +39,57 @@ export default class TaggingForm extends Component {
   }
 
   addTag(tag) {
-    this.setState({
-      isLoading: true
-    })
+    this.props.onStartLoading()
 
-    api.put('/api/like-tags', { tags: [tag], url: this.props.like.url }, err => {
-      if (err) return this.setState({ error: err, isLoading: false })
+    const tags = tag.split(/,\s*/)
 
+    api.put('/api/like-tags', { tags: tags, url: this.props.like.url }, err => {
+      this.props.onStopLoading()
+      if (err) return this.props.onError(err)
       this.load()
     })
+
+    const copy = this.state.tags.slice()
+    copy.push.apply(copy, tags)
+    this.setState({ tags: copy })
   }
 
   deleteTag(tag) {
-    this.setState({
-      isLoading: true
-    })
+    this.props.onStartLoading()
 
     api.delete('/api/like-tags', { tag: tag, url: this.props.like.url }, err => {
-      if (err) return this.setState({ error: err, isLoading: false })
-
+      this.props.onStopLoading()
+      if (err) return this.props.onError(err)
       this.load()
     })
+
+    const copy = this.state.tags.slice()
+    let index = -1
+
+    let i = copy.length
+    while (i--) {
+      if (copy[i] === tag || copy[i].name == tag) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index > -1) {
+      copy.splice(index, 1)
+      this.setState({ tags: copy })
+    }
   }
 
   render() {
     return (
       <div className="tagging-form">
-        <Input onPressEnter={value => this.addTag(value)} icon="tag" placeholder="Type a tag & hit enter" />
+        <Input onPressEnter={value => this.addTag(value)} onTypeComma={value => this.addTag(value)} icon="tag" placeholder="Type a tag & hit enter" />
         {this.renderTags()}
       </div>
     )
   }
 
-  renderLoading() {
-    return (
-      <div className="loading">
-        Loading...
-      </div>
-    )
-  }
-
   renderTags() {
-    if (this.state.isLoading) return this.renderLoading()
     if (this.state.tags.length == 0) return
 
     return (
@@ -83,6 +100,10 @@ export default class TaggingForm extends Component {
   }
 
   renderTag(tag) {
+    if (typeof tag === 'string') {
+      tag = { name: tag }
+    }
+
     return (
       <div className="tag">
         {tag.name}

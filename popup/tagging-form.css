@@ -10,9 +10,10 @@
   margin: 5px 5px;
   border: 1px solid #eee;
   background: #fff;
-  color: #333;
+  color: #111;
   border-radius: 3px;
   line-height: 1.6;
+  cursor: default;
 }
 
 .tagging-form .tag .icon {

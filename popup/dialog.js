@@ -37,6 +37,10 @@ export default class Dialog extends Component {
       <LikedDialog isJustLiked={this.state.isJustLiked}
                    like={this.props.record}
                    unlike={this.props.unlike}
+                   onStartLoading={this.props.onStartLoading}
+                   onStopLoading={this.props.onStopLoading}
+                   onSync={this.props.onSync}
+                   onError={this.props.onError}
                    />
     )
   }

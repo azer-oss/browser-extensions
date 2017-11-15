@@ -6,11 +6,28 @@ export default class Icon extends Component {
 
     if (method) {
       return (
-        <div className="icon" {...this.props}>
+        <div className={`icon icon-${this.props.name}`} {...this.props}>
           {method()}
         </div>
       )
     }
+  }
+
+  renderAlert() {
+    return (
+      <svg id="i-alert" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width={this.props.stroke || "2"}>
+        <path d="M16 3 L30 29 2 29 Z M16 11 L16 19 M16 23 L16 25" />
+      </svg>
+    )
+  }
+
+  renderClock() {
+    return (
+      <svg id="i-clock" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width={this.props.stroke || "2"}>
+        <circle cx="16" cy="16" r="14" />
+        <path d="M16 8 L16 16 20 20" />
+      </svg>
+    )
   }
 
   renderClose() {
