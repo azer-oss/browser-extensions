@@ -33,7 +33,7 @@ export default class LikedDialog extends Component {
         {this.props.isJustLiked ? <h2>Done.</h2> : null}
         { this.state.isOnline ? this.renderOnlineBody() : this.renderOfflineBody()}
         <div className="footer">
-          <Icon name="trash" title="Unlike This Page" onClick={this.props.unlike} />
+          <Icon name="trash" title="Unlike This Page" onClick={() => this.props.unlike()} />
         </div>
       </div>
     )

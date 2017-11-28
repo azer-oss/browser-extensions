@@ -1,11 +1,13 @@
 import { h, Component } from "preact"
-import Button from "./button"
-import LikedDialog from "./liked-dialog"
-import Input from "./input"
+import Button from "../popup/button"
+import LikedDialog from "../popup/liked-dialog"
+import Input from "../popup/input"
+import tabs from "../safari/tabs"
 
 export default class Dialog extends Component {
   search(value) {
-    chrome.tabs.create({ url: 'https://getkozmos.com/search?q=' + encodeURI(value) })
+    tabs.create('https://getkozmos.com/search?q=' + encodeURI(value));
+    safari.self.hide();
   }
 
   render() {
@@ -25,7 +27,7 @@ export default class Dialog extends Component {
           Looks like you haven't logged in yet.
 
         </div>
-        <Button title="Login Kozmos" onClick={() => chrome.tabs.create({ url: 'https://getkozmos.com/login' })}>
+        <Button title="Login Kozmos" onClick={() => {tabs.create('https://getkozmos.com/login'); safari.self.hide();}}>
           Login
         </Button>
       </div>

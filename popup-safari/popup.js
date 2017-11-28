@@ -1,35 +1,41 @@
 import { h, Component, render } from "preact"
 import tabs from "../safari/tabs"
-import Messaging from "./messaging"
 import { setAsLiked, setAsNotLiked, setAsLoading } from "../safari/icons"
 import Dialog from "./dialog"
+import { Icon } from '../popup/icon';
 
 class Popup extends Component {
   constructor(props) {
     super(props)
+    window.Popover = this;
 
-    this.messages = new Messaging()
+    this.updatePopover();
+    safari.extension.globalPage.contentWindow.listenForPopover()
+  }
 
+  updatePopover() {
     this.setState({
       isLoggedIn: !!localStorage['token']
     })
 
     const tab = tabs.current();
-
     this.setState({
       url: tab.url,
       title: tab.title
     })
 
-    safari.extension.global.contentWindow.getLike(tab.url)
+    safari.extension.globalPage.contentWindow.getLike(tab.url)
       .then((resp) => {
-        this.setState({
-          like: resp.like,
-          isLiked: !!resp.like
-        })
-
-        if (!this.state.isLiked) {
-          this.like()
+        if (resp) {
+          this.setState({
+            like: resp.like,
+            isLiked: !!resp.like
+          })
+        } else {
+          this.setState({
+            like: null,
+            isLiked: false
+          })
         }
       });
   }
@@ -63,8 +69,11 @@ class Popup extends Component {
   }
 
   updateActionIcon() {
-    chrome.browserAction.setIcon({ path });
-    chrome.browserAction.setTitle({ title });
+    if (this.state.isLiked) {
+      setAsLiked();
+    } else {
+      setAsNotLiked();
+    }
   }
 
   close() {
@@ -73,41 +82,43 @@ class Popup extends Component {
 
   like() {
     if (!this.state.isLoggedIn) {
-      chrome.tabs.create({ url: 'https://getkozmos.com/login' })
+      tabs.create('https://getkozmos.com/login')
     }
 
-    this.messages.send({ task: 'like', url: this.state.url, title: this.state.title }, resp => {
-      if (resp.content.error) return this.setState({ error: resp.content.error })
+    safari.extension.globalPage.contentWindow.like(this.state.url, this.state.title)
+      .then((resp) => {
+        if (resp.error) return this.setState({ error: resp.error })
 
-      this.setState({
-        like: resp.content.like,
-        isLiked: !!resp.content.like,
-        isJustLiked: true
+        this.setState({
+          like: resp.like,
+          isLiked: !!resp.like,
+          isJustLiked: true
+        })
+
+        this.updateActionIcon()
       })
-
-      this.updateActionIcon()
-    })
   }
 
   unlike() {
-    this.messages.send({ task: 'unlike', url: this.state.url }, resp => {
-      if (resp.content.error) return this.setState({ error: resp.content.error })
+    safari.extension.globalPage.contentWindow.unlike(this.state.url)
+      .then((resp) => {
+        if (resp.error) return this.setState({ error: resp.error })
 
-      this.setState({
-        like: null,
-        isLiked: false
+        this.setState({
+          like: null,
+          isLiked: false
+        })
+
+        this.updateActionIcon()
       })
-
-      this.updateActionIcon()
-    })
   }
 
   render() {
     return (
-      <div className="container">
+      <div className="safari container">
         <h1>
-          <a title="Open Kozmos" target="_blank" href="https://getkozmos.com">kozmos</a>
-          <Icon name="external" onclick={() => chrome.tabs.create({ url: 'https://getkozmos.com' })} title="Open Your Bookmarks" />
+          <a title="Open Kozmos" target="_blank" href="https://getkozmos.com" onclick={() => { tabs.create('https://getkozmos.com'); safari.self.hide(); }}>kozmos</a>
+          <Icon name="external" onclick={() => { tabs.create('https://getkozmos.com'); safari.self.hide(); }} title="Open Your Bookmarks" />
         </h1>
 
         <Dialog isLiked={this.state.isLiked}

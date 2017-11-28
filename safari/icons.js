@@ -1,31 +1,7 @@
-const debounce = require("debounce-fn")
-const api = require("../lib/api")
-const likes = require("../lib/likes")
-const tabs = require("./tabs")
-
-const _onCurrentURLUpdated = debounce(onCurrentURLUpdated, 200)
-
 module.exports = {
-  listenForChanges,
   setAsLiked,
   setAsNotLiked,
-  onCurrentURLUpdated: _onCurrentURLUpdated
-}
-
-function listenForChanges() {
-  tabs.onUpdated(_onCurrentURLUpdated)
-}
-
-function onCurrentURLUpdated(event) {
-  setAsLoading()
-
-  likes.isLiked(tabs.current().url, function (liked) {
-    if (liked) {
-      setAsLiked()
-    } else {
-      setAsNotLiked()
-    }
-  })
+  setAsLoading
 }
 
 function setAsLiked () {
