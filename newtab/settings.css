@@ -5,81 +5,25 @@
   right: 0;
   width: 350px;
   height: 100%;
-  max-width: 0;
-  background: rgba(10, 10, 10, 1);
+  z-index: 9999;
 
-  -webkit-transition: all 0.2s ease-in;
+
+  /*-webkit-transition: all 0.2s ease-in;
   -moz-transition: all 0.2s ease-in;
   -o-transition: all 0.2s ease-in;
-  transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;*/
 }
 
-.settings h1 {
-  margin: 32px 0 0 30px;
-  font-size: 16px;
-  color: #fff;
-  padding-bottom: 5px;
-}
-
-.settings h1 span {
-  border-bottom: 1px dotted #222;
-  padding: 0 0 7px 0;
-  letter-spacing: 0.8px;
-}
-
-.settings.open {
-  max-width: 40%;
-}
-
-.settings .triangle {
-  display: none;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 20px 20px 20px 0;
-  border-color: transparent rgba(0, 0, 0, 0.95) transparent transparent;
+.settings .icon {
   position: absolute;
-  left: -20px;
-  top: 50%;
-  margin-top: -15px;
+  top: 15px;
+  right: 15px;
+  width: 25px;
+  height: 25px;
+  opacity: 0.7;
+  cursor: pointer;
 }
 
-.settings.open .triangle {
-  display: block;
-}
-
-.settings-button {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  padding: 10px;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: transparent;
-
-  -webkit-transition: top 0.3s ease-in;
-  -moz-transition: top 0.3s ease-in;
-  -o-transition: top 0.3s ease-in;
-  transition: top 0.3s ease-in;
-}
-
-.settings-button:hover {
-  border-color: rgba(255, 255, 255, 1);
-}
-
-.settings-button .icon {
-  width: 20px;
-  height: 20px;
-}
-
-.settings-button.with-close-icon {
-  padding: 10px;
-  top: 20px;
-  bottom: initial;
-  border-color: transparent;
+.settings .icon:hover {
   opacity: 1;
-}
-
-.settings-button.with-close-icon .icon {
-  width: 15px;
-  height: 15px;
 }

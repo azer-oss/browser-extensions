@@ -19,18 +19,18 @@ export default class ContentMessageProxy extends Messaging {
   }
 
   sendMessageToWeb(msg) {
+    msg.proxy = this.name
     postMessage(msg, config.host)
   }
 
   sendMessageToBackground(msg) {
+    msg.proxy = this.name
     chrome.runtime.sendMessage(msg)
   }
 
   sendMessage(msg) {
     if (msg.to === 'kozmos:web') return this.sendMessageToWeb(msg)
     if (msg.to === 'kozmos:background') return this.sendMessageToBackground(msg)
-
-    throw new Error('Message missing valid `to` field`')
   }
 
   send (msg, callback) {

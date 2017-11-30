@@ -1,10 +1,10 @@
 import { h, Component, render } from "preact"
 import Wallpaper from './wallpaper'
 import Menu from "./menu"
-import Button from "./button"
 import wallpapers from './wallpapers'
 import Search from './search'
-import icons from "./icons"
+import Logo from './logo'
+import Settings from './settings'
 
 class NewTab extends Component {
   constructor(props) {
@@ -18,6 +18,7 @@ class NewTab extends Component {
   render() {
     return (
       <div className={`newtab`}>
+        <Logo />
         <div className="center">
           <Search />
         </div>

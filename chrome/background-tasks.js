@@ -4,6 +4,9 @@ import tabs from "./tabs"
 import urls from "urls"
 import { db, onError, onPostUpdates, onReceiveUpdates } from "../lib/db"
 import { get as auth } from "./token"
+import api from "../lib/api"
+import { version }  from "../chrome-dist/manifest.json"
+
 
 export default class BackgroundTasks extends RemoteTasks {
   constructor() {
@@ -17,7 +20,8 @@ export default class BackgroundTasks extends RemoteTasks {
       'set-token': this.setToken,
       'like': this.like,
       'unlike': this.unlike,
-      'get-like': this.getLike
+      'get-like': this.getLike,
+      'get-version': this.getVersion
     })
 
     onError((err, action) => {
@@ -60,7 +64,13 @@ export default class BackgroundTasks extends RemoteTasks {
     auth(error => {
       if (error) return this.reply(msg, { error })
 
-      api.post('/api/recent', {}, (error, content) => {
+      const options = {
+        size: 25,
+        from: 0,
+        filter_by_user: true
+      }
+
+      api.post('/api/search', options, (error, content) => {
         this.reply(msg, { content, error })
       })
     })
@@ -70,7 +80,14 @@ export default class BackgroundTasks extends RemoteTasks {
     auth(error => {
       if (error) return this.reply(msg, { error })
 
-      api.post('/api/search', { query: msg.content.query }, (error, content) => {
+      const options = {
+        query: msg.content.query,
+        size: 25,
+        from: 0,
+        filter_by_user: true
+      }
+
+      api.post('/api/search', options, (error, content) => {
         this.reply(msg, { content, error })
       })
     })
@@ -91,6 +108,10 @@ export default class BackgroundTasks extends RemoteTasks {
     db.setToken(msg.content.token)
   }
 
+  getVersion(msg) {
+    this.reply(msg, { version })
+  }
+
   listenForMessages() {
     chrome.runtime.onMessage.addListener(msg => this.onReceive(msg))
   }
@@ -100,10 +121,8 @@ export default class BackgroundTasks extends RemoteTasks {
       return chrome.runtime.sendMessage(msg)
     }
 
-
     tabs.current((err, tab) => {
       if (err) throw err
-
       chrome.tabs.sendMessage(tab.id, msg)
     })
   }

@@ -1,5 +1,4 @@
 import { h, Component } from "preact"
-import Button from './button'
 
 export default class Menu extends Component {
   setTitle(title) {
