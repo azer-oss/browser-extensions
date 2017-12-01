@@ -1,3 +1,26 @@
+import { h } from "preact"
+import Rows from "./rows"
+
+export default class TopSites extends Rows {
+  constructor(props) {
+    super(props)
+    this.title = 'Frequently Visited'
+    this.name = 'top'
+  }
+
+  update(query) {
+    if (query.length > 0) return this.setState({
+      rows: []
+    })
+
+    get(rows => {
+      this.setState({
+        rows: rows.slice(0, this.max(rows.length)).map(r => this.mapEach(r))
+      })
+    })
+  }
+}
+
 export function get (callback) {
   chrome.topSites.get(topSites => {
     callback(filter(topSites))

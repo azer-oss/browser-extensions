@@ -12,16 +12,15 @@ export default class URLIcon extends Component {
   }
 
   select() {
-    this.props.content.type = this.props.type
     this.props.onSelect(this.props.content)
   }
 
   render() {
     return (
-      <a className={`urlicon ${this.props.selected ? "selected" : ""}`} href={this.url()} title={`${this.title()} - ${cleanURL(this.props.content.url)}`} onMouseOver={() => this.select()}>
+      <a id={this.props.content.id} className={`urlicon ${this.props.selected ? "selected" : ""}`} href={this.url()} title={`${this.title()} - ${cleanURL(this.props.content.url)}`} onMouseOver={() => this.select()}>
         <URLImage content={this.props.content} icon-only />
         <div className="title">
-          {this.title()}
+          {this.props.content.id} {this.title()}
         </div>
         <div className="url">
           {this.prettyURL()}
