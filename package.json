@@ -23,6 +23,7 @@
     "likedb": "kozmos/likedb",
     "preact": "^8.1.0",
     "pubsub": "github:azer/pubsub",
+    "random-color": "github:azer/random-color",
     "relative-date": "^1.1.3",
     "title-from-url": "azer/title-from-url",
     "urls": "github:kaktus/urls"

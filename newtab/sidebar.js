@@ -15,13 +15,9 @@ export default class Sidebar extends Component {
     })
   }
 
-  /*shouldComponentUpdate(nextProps, nextState) {
-    return this.props.selected.url !== nextProps.selected.url
-    }*/
-
   deleteTopSite() {
     hideTopSite(this.props.selected.url)
-    this.props.onUpdateTopSites()
+    this.props.updateFn()
   }
 
   toggleLike() {
@@ -77,7 +73,7 @@ export default class Sidebar extends Component {
 
     return (
       <div title={title} className={`button like-button ${this.state.like? "liked" : ""}`} onClick={() => this.toggleLike()}>
-        <Icon name={this.state.like ? "redHeart" : "heart" } />
+        <Icon name="heart" />
         {this.state.like ? `Liked ${ago}` : "Like It"}
       </div>
     )

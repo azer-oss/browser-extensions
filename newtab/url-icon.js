@@ -1,5 +1,5 @@
 import { h, Component } from "preact"
-import img from 'img'
+import img from "img"
 import { clean as cleanURL } from "urls"
 import * as titles from "./titles"
 import URLImage from './url-image'
@@ -17,10 +17,10 @@ export default class URLIcon extends Component {
 
   render() {
     return (
-      <a id={this.props.content.id} className={`urlicon ${this.props.selected ? "selected" : ""}`} href={this.url()} title={`${this.title()} - ${cleanURL(this.props.content.url)}`} onMouseOver={() => this.select()}>
+      <a id={this.props.content.id} className={`urlicon ${this.props.selected ? "selected" : ""}`} href={this.url()} title={`${this.title()} - ${cleanURL(this.props.content.url)}`} onMouseMove={() => this.select()}>
         <URLImage content={this.props.content} icon-only />
         <div className="title">
-          {this.props.content.id} {this.title()}
+          {this.title()}
         </div>
         <div className="url">
           {this.prettyURL()}
@@ -29,8 +29,6 @@ export default class URLIcon extends Component {
       </a>
     )
   }
-
-
 
   title() {
     if (this.props.content.type === 'search-query') {

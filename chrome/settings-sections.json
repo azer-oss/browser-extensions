@@ -1,0 +1,31 @@
+[
+  {
+    key: "oneClickLike",
+    title: "One-click bookmarking",
+    desc: "Heart button will immediately bookmark when clicked.",
+    defaultValue: true,
+    popup: true
+  },
+  {
+    key: "minimalMode",
+    title: "Enable Minimal Mode",
+    desc: "Hide majority of the interface until user focuses.",
+    defaultValue: false,
+    newtab: true
+  },
+  {
+    key: "showWallpaper",
+    title: "Show Wallpaper",
+    desc: "Get a new beautiful photo in your new tab every day.",
+    defaultValue: false,
+    newtab: true
+  },
+  {
+    key: "enableNewTab",
+    title: "Enable New Tab Interface",
+    desc: "Faster and easier search interface.",
+    defaultValue: true,
+    popup: true,
+    newtab: true
+  }
+]

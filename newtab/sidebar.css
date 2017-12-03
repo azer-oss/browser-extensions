@@ -17,6 +17,14 @@
   background-size: auto 50px;
 }
 
+.sidebar .url-image.generated-image {
+  width: calc(100% - 20px);
+}
+
+.sidebar .url-image.generated-image span {
+  font: 100 36px "Open Sans", sans-serif !important;
+}
+
 .sidebar .url-image.image {
   background-size: cover;
 }
@@ -62,22 +70,14 @@
 
 .sidebar .button .icon {
   height: 18px;
-  color: #888;
+  color: #666;
   position: absolute;
   left: 10px;
   height: 20px;
 }
 
-.sidebar .button.like-button .icon {
-  opacity: 0.5;
-}
-
-.sidebar .button.like-button:hover .icon {
-  opacity: 0.7;
-}
-
 .sidebar .button.like-button.liked .icon {
-  opacity: 1;
+  color: #dd2200;
 }
 
 .sidebar .button:hover {

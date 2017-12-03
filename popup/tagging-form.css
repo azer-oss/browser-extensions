@@ -7,7 +7,7 @@
   display: inline-block;
   position: relative;
   padding: 5px 25px 5px 10px;
-  margin: 5px 5px;
+  margin: 5px 3px;
   border: 1px solid #eee;
   background: #fff;
   color: #111;
@@ -19,7 +19,7 @@
 .tagging-form .tag .icon {
   position: absolute;
   top: 10px;
-  right: -4px;
+  right: 7px;
   height: 10px;
   color: #aaa;
   cursor: pointer;

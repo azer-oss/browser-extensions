@@ -51,6 +51,11 @@ h1 .icon {
   cursor: pointer;
 }
 
+h1 .icon-close {
+  top: 5px;
+  height: 13px;
+}
+
 h1 .icon:hover {
   color: #333;
 }

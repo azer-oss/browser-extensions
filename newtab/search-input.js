@@ -2,17 +2,43 @@ import { h, Component } from "preact"
 import Icon from "./icon"
 
 export default class SearchInput extends Component {
+  constructor(props) {
+    super(props)
+
+    this._onClick = this.onClick.bind(this)
+  }
+
   componentDidMount() {
-    if (this.input) this.input.focus()
+    if (this.input) {
+      this.input.focus()
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return nextState.value !== this.state.value
   }
 
+  componentWillMount() {
+    window.addEventListener('click', this._onClick)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this._onClick)
+  }
+
+  onClick(e) {
+    if (!document.querySelector('.content-wrapper .content').contains(e.target)) {
+      this.props.onBlur()
+    }
+  }
+
   onQueryChange(value, keyCode) {
     if (keyCode === 13) {
       return this.props.onPressEnter(value)
+    }
+
+    if (keyCode === 27) {
+      return this.props.onBlur()
     }
 
     this.setState({ value })
@@ -44,10 +70,12 @@ export default class SearchInput extends Component {
 
   renderInput() {
     return (
-      <input ref={el => this.input = el}
+      <input tabindex="1"
+        ref={el => this.input = el}
         type="text"
         className="input"
-        placeholder="What are you looking for?"
+        placeholder="Search or enter website name"
+        onFocus={e => this.props.onFocus()}
         onChange={e => this.onQueryChange(e.target.value)}
         onKeyUp={e => this.onQueryChange(e.target.value, e.keyCode)}
         value={this.state.value} />

@@ -10,7 +10,7 @@ export default class Content extends Component {
       <div className="content-wrapper">
         <div className="bg" style={bg}></div>
         <div className="center">
-          <div className="content">
+          <div className={`content ${this.props.focused ? "focused" : ""}`}>
             {this.props.children}
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { h, Component } from "preact"
 import img from 'img'
+import randomColor from "random-color"
 import { join } from 'path'
 
 export const popularIcons = {
@@ -31,7 +32,11 @@ export const popularIcons = {
   'yelp.com': 'https://s3-media2.fl.yelpcdn.com/assets/srv0/yelp_styleguide/118ff475a341/assets/img/logos/favicon.ico',
   'wordpress.com': 'http://s0.wp.com/i/webclip.png',
   'dropbox.com': 'https://cfl.dropboxstatic.com/static/images/favicon-vflUeLeeY.ico',
-  'mail.superhuman.com': 'https://superhuman.com/build/71222bdc169e5906c28247ed5b7cf0ed.share-icon.png'
+  'mail.superhuman.com': 'https://superhuman.com/build/71222bdc169e5906c28247ed5b7cf0ed.share-icon.png',
+  'aws.amazon.com': 'https://a0.awsstatic.com/libra-css/images/site/touch-icon-iphone-114-smile.png',
+  'console.aws.amazon.com': 'https://a0.awsstatic.com/libra-css/images/site/touch-icon-iphone-114-smile.png',
+  'us-west-2.console.aws.amazon.com': 'https://a0.awsstatic.com/libra-css/images/site/touch-icon-iphone-114-smile.png'
+
 }
 
 export default class URLImage extends Component {
@@ -41,11 +46,35 @@ export default class URLImage extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.content.url !== this.props.content.url) {
+      return true
+    }
+
+    if (nextState.src !== this.state.src) {
+      return true
+    }
+
+    if (nextState.loading !== this.state.loading || nextState.error !== this.state.error) {
+      return true
+    }
+
+    if ((!nextProps.content.images || this.props.content.images) || (nextProps.content.images || !this.props.content.images) || (nextProps.content.images[0] !== this.props.content.images[0])) {
+      return true
+    }
+
+    return false
+  }
+
   componentWillMount() {
     this.refreshSource()
   }
 
   refreshSource(content) {
+    this.setState({
+      color: randomColor(100, 50)
+    })
+
     this.findSource(content)
     this.preload(this.state.src)
   }
@@ -83,40 +112,62 @@ export default class URLImage extends Component {
 
   preload(src) {
     if (this.state.loading) {
-      console.log('already loading', this.props.content.url, this.state.loadingSrc, src)
       return
     }
 
     this.setState({
+      error: null,
       loading: true,
       loadingSrc: src,
       src: this.cachedIconURL()
     })
 
     img(src, err => {
-      if (err) {
-        console.error('Image failed to load. src: %s url: %s', src, err)
+      if (this.state.loadingSrc !== src) {
+        return
+      }
 
+      if (err) {
         return this.setState({
           loading: false,
+          error: err,
           src: this.cachedIconURL()
         })
       }
 
       this.setState({
         src: src,
-        loading: false
+        loading: false,
+        error: null
       })
     })
   }
 
   render() {
+    if (this.state.loading || this.state.error) {
+      return this.renderLoading()
+    }
+
     const style = {
       backgroundImage: `url(${this.state.src})`
     }
 
     return (
       <div className={`url-image ${this.state.type}`} style={style}></div>
+    )
+  }
+
+  renderLoading() {
+    const style = {
+      backgroundColor: this.state.color
+    }
+
+    return (
+      <div className="url-image generated-image center" style={style}>
+        <span>
+          {findHostname(this.props.content.url).slice(0, 1).toUpperCase()}
+        </span>
+      </div>
     )
   }
 

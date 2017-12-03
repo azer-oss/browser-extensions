@@ -106,8 +106,8 @@ export default class TaggingForm extends Component {
 
     return (
       <div className="tag">
-        {tag.name}
         <Icon name="close" stroke="5" title={`Delete "${tag.name}"`} onclick={() => this.deleteTag(tag.name)} />
+        {tag.name}
       </div>
     )
   }

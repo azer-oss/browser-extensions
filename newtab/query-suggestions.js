@@ -1,11 +1,10 @@
-import { h } from "preact"
 import Rows from "./rows"
 import titleFromURL from "title-from-url"
 
 export default class QuerySuggestions extends Rows {
-  constructor(props) {
-    super(props)
-    this.type = 'query-suggestions'
+  constructor(results, sort) {
+    super(results, sort)
+    this.name = 'query-suggestions'
   }
 
   createURLSuggestions(query) {
@@ -22,6 +21,12 @@ export default class QuerySuggestions extends Rows {
 
   createSearchSuggestions(query) {
     if (isURL(query)) return []
+    if (query.indexOf('tag:') === 0 && query.length > 4) return [{
+      url: 'https://getkozmos.com/tag/' + encodeURI(query.slice(4)),
+      query: query,
+      title: `Open "${query.slice(4)}" tag in Kozmos`,
+      type: 'search-query'
+    }]
 
     return [
       {
@@ -40,15 +45,8 @@ export default class QuerySuggestions extends Rows {
   }
 
   update(query) {
-    if (query.length === 0) return this.setState({ rows: [] })
-
-    const rows = this.createURLSuggestions(query)
-      .concat(this.createSearchSuggestions(query))
-      .map(row => this.mapEach(row))
-
-    this.setState({
-      rows: rows.slice(0, this.max(rows.length))
-    })
+    if (!query) return this.add([])
+    this.add(this.createURLSuggestions(query).concat(this.createSearchSuggestions(query)))
   }
 }
 

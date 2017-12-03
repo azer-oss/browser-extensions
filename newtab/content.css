@@ -10,6 +10,19 @@
   width: 70%;
   max-width: 650px;
   z-index: 2;
+
+  -webkit-transition: all 0.1s ease-in;
+  -moz-transition: all 0.1s ease-in;
+  -o-transition: all 0.1s ease-in;
+  transition: all 0.1s ease-in;
+}
+
+.minimal .content {
+  max-width: 500px;
+}
+
+.minimal .content.focused {
+  max-width: 650px;
 }
 
 .content-wrapper > .bg {

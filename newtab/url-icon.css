@@ -5,6 +5,7 @@
   position: relative;
   text-decoration: none;
   margin-top: 10px;
+  outline: none;
 
   -webkit-transition: background 0.1s ease-in;
   -moz-transition: background 0.1s ease-in;

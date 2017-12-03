@@ -2,6 +2,7 @@ import { h, Component } from "preact"
 import Button from "./button"
 import LikedDialog from "./liked-dialog"
 import Input from "./input"
+import Settings from "../newtab/settings"
 
 export default class Dialog extends Component {
   search(value) {
@@ -16,7 +17,7 @@ export default class Dialog extends Component {
     } else {
       return this.renderLogin()
     }
-  }
+ }
 
   renderLogin() {
     return (

@@ -2,15 +2,16 @@ import * as localBookmarks from "./local-bookmarks"
 import RemoteTasks from "../lib/remote-tasks"
 import tabs from "./tabs"
 import urls from "urls"
+import settings from "./settings"
 import { db, onError, onPostUpdates, onReceiveUpdates } from "../lib/db"
 import { get as auth } from "./token"
 import api from "../lib/api"
 import { version }  from "../chrome-dist/manifest.json"
 
-
 export default class BackgroundTasks extends RemoteTasks {
   constructor() {
     super()
+
     this.name = 'kozmos:background'
     this.map({
       'get-local-bookmarks': this.getLocalBookmarks,
@@ -21,7 +22,9 @@ export default class BackgroundTasks extends RemoteTasks {
       'like': this.like,
       'unlike': this.unlike,
       'get-like': this.getLike,
-      'get-version': this.getVersion
+      'get-version': this.getVersion,
+      'get-settings-value': this.getSettingsValue,
+      'set-settings-value': this.setSettingsValue
     })
 
     onError((err, action) => {
@@ -106,6 +109,14 @@ export default class BackgroundTasks extends RemoteTasks {
   setToken(msg) {
     localStorage['token'] = msg.content.token
     db.setToken(msg.content.token)
+  }
+
+  getSettingsValue(msg) {
+    this.reply(msg, { value: settings.get(msg.content.key) })
+  }
+
+  setSettingsValue(msg) {
+    this.reply(msg, { value: settings.set(msg.content.key, msg.content.value) })
   }
 
   getVersion(msg) {

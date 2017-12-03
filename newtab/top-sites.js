@@ -1,24 +1,32 @@
-import { h } from "preact"
 import Rows from "./rows"
 
 export default class TopSites extends Rows {
-  constructor(props) {
-    super(props)
+  constructor(results, sort) {
+    super(results, sort)
     this.title = 'Frequently Visited'
     this.name = 'top'
   }
 
   update(query) {
-    if (query.length > 0) return this.setState({
-      rows: []
-    })
-
-    get(rows => {
-      this.setState({
-        rows: rows.slice(0, this.max(rows.length)).map(r => this.mapEach(r))
-      })
-    })
+    if (query.length > 0) return this.add([])
+    get(rows => this.add(addKozmos(rows.slice(0, 5))))
   }
+}
+
+function addKozmos (rows) {
+  let i = rows.length
+  while (i--) {
+    if (rows[i].url.indexOf('getkozmos.com') > -1) {
+      return rows
+    }
+  }
+
+  rows[4] = {
+    url: 'https://getkozmos.com',
+    title: 'Kozmos'
+  }
+
+  return rows
 }
 
 export function get (callback) {

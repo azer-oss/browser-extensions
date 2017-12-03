@@ -7,6 +7,7 @@
 
 .search-input {
   margin: 0 auto;
+  padding: 3px 0;
   border: 1px solid #ddd;
   background: #fff;
   border-radius: 5px;
@@ -15,8 +16,22 @@
   border-bottom-right-radius: 0;
 }
 
-.search-input:hover {
-  border-color: #ccc;
+.minimal .search-input {
+  /*box-shadow: 1px 1px 8px #ddd;*/
+  border-bottom: 1px solid #ddd;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.has-wallpaper .search-input {
+  border: 0;
+}
+
+.minimal .focused .search-input {
+  box-shadow: none;
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .search-input .logo {
@@ -32,7 +47,7 @@
   height: 22px;
   color: #333;
   padding: 10px 10px 10px 45px;
-  font: 400 18px "San Francisco", "Open Sans", Times, "Verdana", sans-serif;
+  font: 400 18px "Open Sans", sans-serif;
   outline: none;
   border: 0;
   background: transparent;
@@ -46,10 +61,14 @@
   position: absolute;
   margin: 9px 0 0 10px;
   height: 25px;
-  color: #ccc;
+  color: #aaa;
   cursor: pointer;
 }
 
 .search-input .icon:hover {
   color: #aaa;
+}
+
+.focused .search-input .icon {
+  color: #888;
 }

@@ -3,6 +3,7 @@ import tabs from "../chrome/tabs"
 import Messaging from "./messaging"
 import Icon from "./icon"
 import Dialog from "./dialog"
+import Settings from "./settings"
 
 class Popup extends Component {
   constructor(props) {
@@ -30,9 +31,13 @@ class Popup extends Component {
           isLiked: !!resp.content.like
         })
 
-        if (!this.state.isLiked) {
-          this.like()
-        }
+        this.messages.send({ task: 'get-settings-value', key: "oneClickLike" }, resp => {
+          if (resp.error) return this.onError(resp.error)
+
+          if (!this.state.isLiked && resp.content.value) {
+            this.like()
+          }
+        })
       })
     })
   }
@@ -109,11 +114,13 @@ class Popup extends Component {
   }
 
   render() {
+    if (this.state.settings) return this.renderSettings()
+
     return (
       <div className="container">
         <h1>
           <a title="Open Kozmos" target="_blank" href="https://getkozmos.com">kozmos</a>
-          <Icon name="external" onclick={() => chrome.tabs.create({ url: 'https://getkozmos.com' })} title="Open Your Bookmarks" />
+          <Icon name="settings" onClick={() => this.setState({ settings: true })} title="Settings" />
         </h1>
 
         <Dialog isLiked={this.state.isLiked}
@@ -133,6 +140,20 @@ class Popup extends Component {
     )
   }
 
+  renderSettings() {
+    return (
+      <div className="container">
+        <h1>
+          <a title="Open Kozmos" target="_blank" href="https://getkozmos.com">kozmos</a>
+          <Icon stroke="3" name="close" onClick={() => this.setState({ settings: false })} title="Close Settings" />
+        </h1>
+        <Settings type="popup" messages={this.messages} onError={err => this.onError(err)} />
+        {this.renderStatus()}
+      </div>
+    )
+  }
+
+
   renderStatus() {
     return (
       <div className="status">
@@ -148,11 +169,13 @@ class Popup extends Component {
 
     if (this.state.error) {
       return (
-        <a href={'mailto:azer@getkozmos.com?subject=Extension+Error&body=Stack trace:' + encodeURI(this.state.error.stack)}>
-          <Icon name="alert" title="An error occurred. Click here to report it." onclick={() => this.reportError()} stroke="2" />
-        </a>
+        <Icon name="alert" title="An error occurred. Click here to report it." onClick={() => this.reportError()} stroke="2" />
       )
     }
+  }
+
+  reportError() {
+    return window.open('mailto:azer@getkozmos.com?subject=Extension+Error&body=Stack trace:' + encodeURI(this.state.error.stack))
   }
 
 }
