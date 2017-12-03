@@ -1,5 +1,6 @@
 import { h, Component } from "preact"
 import img from 'img'
+import debounce from "debounce-fn"
 import randomColor from "random-color"
 import { join } from 'path'
 
@@ -35,14 +36,19 @@ export const popularIcons = {
   'mail.superhuman.com': 'https://superhuman.com/build/71222bdc169e5906c28247ed5b7cf0ed.share-icon.png',
   'aws.amazon.com': 'https://a0.awsstatic.com/libra-css/images/site/touch-icon-iphone-114-smile.png',
   'console.aws.amazon.com': 'https://a0.awsstatic.com/libra-css/images/site/touch-icon-iphone-114-smile.png',
-  'us-west-2.console.aws.amazon.com': 'https://a0.awsstatic.com/libra-css/images/site/touch-icon-iphone-114-smile.png'
-
+  'us-west-2.console.aws.amazon.com': 'https://a0.awsstatic.com/libra-css/images/site/touch-icon-iphone-114-smile.png',
+  'stackoverflow.com': 'https://cdn.sstatic.net/Sites/stackoverflow/img/apple-touch-icon.png'
 }
 
 export default class URLImage extends Component {
+  constructor(props) {
+    super(props)
+    this._refreshSource = debounce(this.refreshSource.bind(this))
+  }
+
   componentWillReceiveProps(props) {
     if (this.props.content.url !== props.content.url) {
-      this.refreshSource(props.content)
+      this._refreshSource(props.content)
     }
   }
 
@@ -111,13 +117,14 @@ export default class URLImage extends Component {
   }
 
   preload(src) {
-    if (this.state.loading) {
+    if (this.state.loading && this.state.loadingFor === this.props.content.url) {
       return
     }
 
     this.setState({
       error: null,
       loading: true,
+      loadingFor: this.props.content.url,
       loadingSrc: src,
       src: this.cachedIconURL()
     })
@@ -163,7 +170,7 @@ export default class URLImage extends Component {
     }
 
     return (
-      <div className="url-image generated-image center" style={style}>
+      <div data-error={this.state.error} data-type={this.state.type} data-src={this.state.src} className="url-image generated-image center" style={style}>
         <span>
           {findHostname(this.props.content.url).slice(0, 1).toUpperCase()}
         </span>

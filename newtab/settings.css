@@ -40,6 +40,7 @@
 }
 
 .settings .content {
+  visibility: hidden;
   position: absolute;
   height: calc(100% - 100px);
   padding: 50px;
@@ -57,7 +58,7 @@
 }
 
 .settings.open .content {
-  display: block;
+  visibility: visible;
   right: 0;
 }
 

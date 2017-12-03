@@ -39,7 +39,7 @@ export default class URLIcon extends Component {
       return `Open ${cleanURL(this.props.content.url)}`
     }
 
-    if (titles.isValid(this.props.content.title)) {
+    if (this.props.content.title && titles.isValid(this.props.content.title)) {
       return titles.normalize(this.props.content.title)
     }
 
