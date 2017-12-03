@@ -27,7 +27,7 @@ export default class SearchInput extends Component {
   }
 
   onClick(e) {
-    if (!document.querySelector('.content-wrapper .content').contains(e.target)) {
+    if (this.state.value === '' && !document.querySelector('.content-wrapper .content').contains(e.target)) {
       this.props.onBlur()
     }
   }
@@ -74,7 +74,7 @@ export default class SearchInput extends Component {
         ref={el => this.input = el}
         type="text"
         className="input"
-        placeholder="Search or enter website name"
+        placeholder="Search or enter website name."
         onFocus={e => this.props.onFocus()}
         onChange={e => this.onQueryChange(e.target.value)}
         onKeyUp={e => this.onQueryChange(e.target.value, e.keyCode)}
