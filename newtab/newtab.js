@@ -72,7 +72,7 @@ class NewTab extends Component {
 			var active = tabs[0].id
 
 			chrome.tabs.update(active, {
-        url: "chrome-search://local-ntp/local-ntp.html"
+        url: /firefox/i.test(navigator.userAgent) ? "about:newtab" : "chrome-search://local-ntp/local-ntp.html"
       })
 		})
   }
