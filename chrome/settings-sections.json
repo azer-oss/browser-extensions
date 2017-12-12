@@ -20,7 +20,6 @@
     defaultValue: true,
     newtab: true
   },
-  ,
   {
     key: "enableGreeting",
     title: "Show greeting & time",
