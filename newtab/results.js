@@ -22,17 +22,33 @@ export default class Results extends Component {
     super(props)
     this.messages = new Messaging()
 
-    this.categories = [
+    this.setCategories(props)
+
+    this._onKeyPress = debounce(this.onKeyPress.bind(this), 50)
+    this.update(props.query || "")
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.recentBookmarksFirst !== this.props.recentBookmarksFirst) {
+      this.setCategories(props)
+    }
+  }
+
+  setCategories(props) {
+    const categories = [
       new OpenWebsite(this, 1),
       new QuerySuggestions(this, 2),
-      new TopSites(this, 3),
-      new RecentBookmarks(this, 4),
+      new TopSites(this, props.recentBookmarksFirst ? 4 : 3),
+      new RecentBookmarks(this, props.recentBookmarksFirst ? 3 : 4),
       new BookmarkTags(this, 5),
       new BookmarkSearch(this, 6),
       new History(this, 7)
     ]
 
-    this._onKeyPress = debounce(this.onKeyPress.bind(this), 50)
+    this.setState({
+      categories
+    })
+
     this.update(props.query || "")
   }
 
@@ -55,11 +71,11 @@ export default class Results extends Component {
 
     tags = tags.filter(t => 'tag:' + t !== this.props.query)
 
-    const content = this.state.content.concat(rows.filter(r => !urlMap[r.url]).slice(0, this.max()).map((r, i) => {
+    const content = this.trim(this.state.content.concat(rows.filter(r => !urlMap[r.url]).map((r, i) => {
       r.category = category
       r.index = this.state.content.length + i
       return r
-    }))
+    })))
 
     this.setState({
       content,
@@ -68,7 +84,7 @@ export default class Results extends Component {
   }
 
   content() {
-    const content = this.state.content
+    let content = this.state.content
     content.sort((a, b) => {
       if (a.category.sort < b.category.sort) return -1
       if (a.category.sort > b.category.sort) return 1
@@ -109,7 +125,7 @@ export default class Results extends Component {
           title: category.title,
           name: category.name,
           sort: category.sort,
-          collapsed: content.length > MAX_ITEMS && selectedCategory.name != category.name && category.title,
+          collapsed: content.length >= MAX_ITEMS && selectedCategory.name != category.name && !!category.title,
           rows: []
         }
 
@@ -124,16 +140,36 @@ export default class Results extends Component {
     return categories
   }
 
-  max() {
-    const len = this.state.content.length
+  trim(content) {
+    const categoryCounts = {}
+    const pinnedCount = this.pinnedRowCount()
+
+    content = content.filter(r => {
+      if (!categoryCounts[r.category.name]) {
+        categoryCounts[r.category.name] = 0
+      }
+
+      categoryCounts[r.category.name]++
+
+      return r.category.pinned || MAX_ITEMS - pinnedCount >= categoryCounts[r.category.name]
+    })
+
+    return content
+  }
+
+  pinnedRowCount(content) {
+    content || (content = this.state.content)
+    const len = content.length
+
+    let ctr = 0
     let i = -1
     while (++i < len) {
-      if (!this.state.content[i].category.pinned) {
-        break;
+      if (content[i].category.pinned) {
+        ctr++
       }
     }
 
-    return this.props.query ? MAX_ITEMS - i : MAX_ITEMS
+    return ctr
   }
 
   reset(query) {
@@ -149,7 +185,7 @@ export default class Results extends Component {
   update(query) {
     query = query.trim()
     this.reset()
-    this.categories.forEach(c => c.onNewQuery(query))
+    this.state.categories.forEach(c => c.onNewQuery(query))
   }
 
   select(index) {
@@ -200,6 +236,10 @@ export default class Results extends Component {
       return true
     }
 
+    if (nextProps.recentBookmarksFirst !== this.props.recentBookmarksFirst) {
+      return true
+    }
+
     return false
   }
 
@@ -215,6 +255,11 @@ export default class Results extends Component {
     if (props.query !== this.props.query) {
       this.update(props.query || "")
     }
+
+    if (props.recentBookmarksFirst !== this.props.recentBookmarksFirst) {
+      this.setCategories(props)
+    }
+
   }
 
   navigateTo(url) {

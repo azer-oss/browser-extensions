@@ -8,7 +8,7 @@ export default class RecentBookmarks extends Rows {
   }
 
   shouldBeOpen(query) {
-    return query.length == 0
+    return query.length === 0
   }
 
   fail(err) {
@@ -18,7 +18,6 @@ export default class RecentBookmarks extends Rows {
   update(query) {
     this.results.messages.send({ task: 'get-recent-bookmarks', query }, resp => {
       if (resp.error) return this.fail(resp.error)
-
       this.add(resp.content.results.likes)
     })
   }

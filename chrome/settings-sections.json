@@ -7,6 +7,13 @@
     popup: true
   },
   {
+    key: "recentBookmarksFirst",
+    title: "Recent Bookmarks First",
+    desc: "Move Recent Bookmarks Over Frequently Visited",
+    defaultValue: true,
+    newtab: true
+  },
+  {
     key: "minimalMode",
     title: "Enable Minimal Mode",
     desc: "Hide majority of the interface until user focuses.",

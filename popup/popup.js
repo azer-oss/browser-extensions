@@ -88,7 +88,7 @@ class Popup extends Component {
     }
 
     this.messages.send({ task: 'like', url: this.state.url, title: this.state.title }, resp => {
-      if (resp.content.error) return this.setState({ error: resp.content.error })
+      if (resp.content.error) return this.onError(resp.content.error)
 
       this.setState({
         like: resp.content.like,
@@ -102,7 +102,7 @@ class Popup extends Component {
 
   unlike() {
     this.messages.send({ task: 'unlike', url: this.state.url }, resp => {
-      if (resp.content.error) return this.setState({ error: resp.content.error })
+      if (resp.content.error) return this.onError(resp.content.error)
 
       this.setState({
         like: null,
@@ -175,7 +175,7 @@ class Popup extends Component {
   }
 
   reportError() {
-    return window.open('mailto:azer@getkozmos.com?subject=Extension+Error&body=Stack trace:' + encodeURI(this.state.error.stack))
+    return window.open('mailto:azer@getkozmos.com?subject=Extension+Error&body=' + encodeURI(`Message: ${this.state.error.message} Stack: ${this.state.error.stack}`))
   }
 
 }

@@ -1,10 +1,13 @@
 import Rows from "./rows"
+import debounce from "debounce-fn"
 
 export default class BookmarkSearch extends Rows {
   constructor(results, sort) {
     super(results, sort)
     this.name = 'bookmark-search'
     this.title = 'Liked in Kozmos'
+
+    this.update = debounce(this._update.bind(this), 250)
   }
 
   shouldBeOpen(query) {
@@ -15,7 +18,7 @@ export default class BookmarkSearch extends Rows {
     console.error(error)
   }
 
-  update(query) {
+  _update(query) {
     const oquery = query || this.results.props.query
 
     this.results.messages.send({ task: 'search-bookmarks', query }, resp => {

@@ -56,7 +56,7 @@ export default class Settings extends Component {
       <div className="content">
         {this.renderCloseButton()}
         <h1>Settings</h1>
-        <h2>Customize your new tab made by <a href="https://getkozmos.com">Kozmos</a>.</h2>
+        <h2>Got feedback / recommendation ? <a href="mailto:azer@getkozmos.com">feedback</a> anytime.</h2>
         {this.renderSections()}
         <div className="footer">
           <button onclick={() => this.setState({ open: false })}>

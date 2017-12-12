@@ -19,7 +19,7 @@ export default class Search extends Component {
       focused: false
     })
 
-    this._onQueryChange = debounce(this.onQueryChange.bind(this), 250)
+    this._onQueryChange = debounce(this.onQueryChange.bind(this), 50)
   }
 
   id() {
@@ -77,7 +77,7 @@ export default class Search extends Component {
             onBlur={() => this.onBlur()}
             value={this.state.query}
             />
-            <Results nextWallpaper={this.props.nextWallpaper} prevWallpaper={this.props.prevWallpaper} openTag={tag => this._onQueryChange('tag:' + tag)} focused={this.state.focused} query={this.state.query} />
+            <Results recentBookmarksFirst={this.props.recentBookmarksFirst} nextWallpaper={this.props.nextWallpaper} prevWallpaper={this.props.prevWallpaper} openTag={tag => this._onQueryChange('tag:' + tag)} focused={this.state.focused} query={this.state.query} />
             <div className="clear"></div>
         </div>
       </Content>
