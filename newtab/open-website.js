@@ -1,14 +1,15 @@
 import Rows from "./rows"
 
-export default class BookmarkSearch extends Rows {
+export default class OpenWebsite extends Rows {
   constructor(results, sort) {
     super(results, sort)
-    this.name = 'bookmark-search'
-    this.title = 'Liked in Kozmos'
+    this.name = 'open-website'
+    this.pinned = true
+    this.title = ''
   }
 
   shouldBeOpen(query) {
-    return query && query.length > 1 && (query.indexOf('tag:') !== 0 || query.length < 5)
+    return query && query.length > 1 && /^[\w\.]+$/i.test(query)
   }
 
   fail(error) {
@@ -18,14 +19,14 @@ export default class BookmarkSearch extends Rows {
   update(query) {
     const oquery = query || this.results.props.query
 
-    this.results.messages.send({ task: 'search-bookmarks', query }, resp => {
+    this.results.messages.send({ task: 'get-website', query }, resp => {
       if (oquery !== this.results.props.query.trim()) {
         return
       }
 
       if (resp.error) return this.fail(resp.error)
 
-      this.add(resp.content.results.likes)
+      this.add(resp.content.results.likes.slice(0, 1))
     })
   }
 }

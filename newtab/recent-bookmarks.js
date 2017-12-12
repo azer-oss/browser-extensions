@@ -7,9 +7,15 @@ export default class RecentBookmarks extends Rows {
     this.title = 'Recently Liked in Kozmos'
   }
 
-  update(query) {
-    if (query.length > 0) return this.add([])
+  shouldBeOpen(query) {
+    return query.length == 0
+  }
 
+  fail(err) {
+    console.error(err)
+  }
+
+  update(query) {
     this.results.messages.send({ task: 'get-recent-bookmarks', query }, resp => {
       if (resp.error) return this.fail(resp.error)
 

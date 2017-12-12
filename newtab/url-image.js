@@ -88,7 +88,7 @@ export default class URLImage extends Component {
   findSource(content) {
     content || (content = this.props.content)
 
-    if (!this.props['icon-only'] && content.images && content.images.length > 0) {
+    if (!this.props['icon-only'] && content.images && content.images.length > 0 && content.images[0]) {
       return this.setState({
         type: 'image',
         src: content.images[0]
@@ -120,6 +120,7 @@ export default class URLImage extends Component {
     if (this.state.loading && this.state.loadingFor === this.props.content.url) {
       return
     }
+
 
     this.setState({
       error: null,

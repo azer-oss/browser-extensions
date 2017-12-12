@@ -23,6 +23,14 @@
   border-bottom-right-radius: 5px;
 }
 
+.minimal .search-input input {
+  cursor: pointer;
+}
+
+.minimal .focused .search-input input {
+  cursor: text;
+}
+
 .has-wallpaper .search-input {
   border: 0;
 }

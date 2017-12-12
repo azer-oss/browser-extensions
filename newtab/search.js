@@ -4,6 +4,7 @@ import Content from "./content"
 import SearchInput from "./search-input"
 import Results from "./results"
 import Messaging from "./messaging"
+import Greeting from "./greeting"
 
 export default class Search extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ export default class Search extends Component {
       focused: false
     })
 
-    this._onQueryChange = debounce(this.onQueryChange.bind(this), 50)
+    this._onQueryChange = debounce(this.onQueryChange.bind(this), 250)
   }
 
   id() {
@@ -69,11 +70,14 @@ export default class Search extends Component {
     return (
       <Content wallpaper={this.props.wallpaper} focused={this.state.focused}>
         <div className="content-inner">
+          {this.props.enableGreeting ? <Greeting name={this.state.username} messages={this.messages} /> : null}
           <SearchInput onPressEnter={() => this.onPressEnter()}
             onQueryChange={this._onQueryChange}
             onFocus={() => this.onFocus()}
-            onBlur={() => this.onBlur()} />
-            <Results focused={this.state.focused} query={this.state.query} />
+            onBlur={() => this.onBlur()}
+            value={this.state.query}
+            />
+            <Results nextWallpaper={this.props.nextWallpaper} prevWallpaper={this.props.prevWallpaper} openTag={tag => this._onQueryChange('tag:' + tag)} focused={this.state.focused} query={this.state.query} />
             <div className="clear"></div>
         </div>
       </Content>

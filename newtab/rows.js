@@ -9,4 +9,12 @@ export default class Rows {
   add(rows) {
     this.results.addRows(this, rows)
   }
+
+  onNewQuery(query) {
+    this.latestQuery = query
+
+    if (this.shouldBeOpen(query)) {
+      this.update(query)
+    }
+  }
 }

@@ -5,6 +5,11 @@ export default class QuerySuggestions extends Rows {
   constructor(results, sort) {
     super(results, sort)
     this.name = 'query-suggestions'
+    this.pinned = true
+  }
+
+  shouldBeOpen(query) {
+    return query.length > 1 && query.trim().length > 1
   }
 
   createURLSuggestions(query) {
@@ -45,7 +50,6 @@ export default class QuerySuggestions extends Rows {
   }
 
   update(query) {
-    if (!query) return this.add([])
     this.add(this.createURLSuggestions(query).concat(this.createSearchSuggestions(query)))
   }
 }

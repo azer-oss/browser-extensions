@@ -4,9 +4,56 @@ import wallpapers from './wallpapers'
 const ONE_DAY = 1000 * 60 * 60 * 24
 
 export default class Wallpaper extends Component {
-  constructor(props) {
-    super(props)
-    setTimeout(this.cacheTomorrow(), 1000)
+  componentWillMount() {
+    this.load()
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.index !== this.props.index) {
+      this.load()
+    }
+  }
+
+  load() {
+    this.setState({
+      loading: true,
+      src: null
+    })
+
+    img(this.selected().url, err => {
+      if (err) return this.onError(err)
+
+      this.setState({
+        loading: false,
+        src: this.selected()
+      })
+    })
+
+    setTimeout(() => {
+      if (!this.state.loading || this.props.index) return
+
+      let start = Date.now()
+      let cached = img(this.url(this.src(this.yesterday())), err => {
+        if (err || !this.state.loading) return
+
+        this.setState({
+          src: this.src(this.yesterday())
+        })
+      })
+
+      setTimeout(() => {
+        cached.src = '';
+      }, 1000)
+    }, 500)
+  }
+
+  onError(error) {
+    console.error(error)
+
+    this.setState({
+      loading: false,
+      error
+    })
   }
 
   today() {
@@ -16,46 +63,40 @@ export default class Wallpaper extends Component {
     return Math.floor(diff / ONE_DAY)
   }
 
-  selected() {
-    return wallpapers[this.today() % wallpapers.length]
+  yesterday() {
+    return this.today() - 1
   }
 
-  cacheTomorrow() {
-    const url = wallpapers[(this.today() + 1) % wallpapers.length].url
-    if (localStorage['last-wallpaper-cache'] === url) return
+  src(index) {
+    return wallpapers[index % wallpapers.length]
+  }
 
-    img(url, err => {
-      localStorage['last-wallpaper-cache'] = url
-    })
+  selected() {
+    return this.src(this.today()  + (this.props.index || 0))
+  }
+
+  width() {
+    return window.innerWidth
+  }
+
+  url(src) {
+    return src.url + '?auto=format&fit=crop&w=' + this.width()
   }
 
   render() {
-    const selected = this.selected()
+    if (!this.state.src) return
+
+    const src = this.state.src
     const style = {
-      backgroundImage: `url(${selected.url})`
+      backgroundImage: `url(${this.url(this.state.src)})`
     }
 
-    if (selected.position) {
-      style.backgroundPosition = selected.position
+    if (src.position) {
+      style.backgroundPosition = src.position
     }
 
     return (
       <div className="wallpaper" style={style}></div>
-    )
-  }
-
-  renderAuthor() {
-    let name = this.props.content.user.name || this.props.content.user.username
-    let link = this.props.content.user.portfolio_url || ('https://unsplash.com/@' + this.props.content.user.username)
-    const profilePhotoStyle = {
-      backgroundImage: `url(${this.props.content.user.profile_image.small})`
-    }
-
-    return (
-      <a href={link} className="author" title={`Photo was shot by ${this.props.content.user.name}`}>
-        <span className="profile-image" style={profilePhotoStyle}></span>
-        <label>Photographer: </label>{name}
-      </a>
     )
   }
 }

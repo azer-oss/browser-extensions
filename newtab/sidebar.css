@@ -2,8 +2,13 @@
   border-left: 1px dotted #ddd;
   position: absolute;
   width: 35%;
-  height: 100%;
+  height: calc(100% - 1px);
   right: 0;
+  z-index: 1;
+}
+
+.has-tags .sidebar {
+  height: calc(100% - 51px);
 }
 
 .sidebar .link {

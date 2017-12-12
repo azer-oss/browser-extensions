@@ -1,4 +1,5 @@
 import Rows from "./rows"
+import { clean } from 'urls'
 
 export default class TopSites extends Rows {
   constructor(results, sort) {
@@ -7,9 +8,36 @@ export default class TopSites extends Rows {
     this.name = 'top'
   }
 
+  shouldBeOpen(query) {
+    return query.length < 5
+  }
+
   update(query) {
-    if (query.length > 0) return this.add([])
+    if (!query) {
+      return this.all()
+    } else {
+      return this.filterByQuery(query)
+    }
+  }
+
+  all() {
     get(rows => this.add(addKozmos(rows.slice(0, 5))))
+  }
+
+  filterByQuery(query) {
+    const result = []
+
+    chrome.topSites.get(topSites => {
+      let i = -1
+      const len = topSites.length
+      while (++i < len) {
+        if (clean(topSites[i].url).indexOf(query) === 0 || topSites[i].title.toLowerCase().indexOf(query) === 0) {
+          result.push(topSites[i])
+        }
+      }
+
+      this.add(result)
+    })
   }
 }
 
@@ -42,7 +70,11 @@ export function hide (url) {
 }
 
 function getHiddenTopSites () {
-  let list = {}
+  let list = {
+    'https://google.com/': true,
+    'http://google.com/': true
+  }
+
   try {
     list = JSON.parse(localStorage['hidden-toplist'])
   } catch (err) {

@@ -1,0 +1,58 @@
+.tagbar {
+  background: #f0f0f0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  z-index: 2;
+  padding: 10px 0;
+  position: absolute;
+  width: calc(100% - 2px);
+  bottom: 0;
+
+  border: 1px solid #ddd;
+  border-top: 0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.has-wallpaper .tagbar {
+  width: 100%;
+  border: 0;
+}
+
+.tagbar .personal-tags {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 15px 0 35px;
+  height: 30px;
+}
+
+.tagbar a {
+  display: inline-block;
+  padding: 5px 10px 5px 10px;
+  font: 14px "Open Sans", sans-serif;
+  background: #fff;
+  color: #666;
+  margin: 0 5px 3px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tagbar a:hover {
+  color: #333;
+}
+
+.tagbar .icon {
+  position: absolute;
+  left: 12px;
+  top: 15px;
+  height: 18px;
+  color: #ccc;
+}
+
+.has-wallpaper .tagbar {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.has-wallpaper .tagbar .icon {
+  color: rgba(255, 255, 255, 0.7);
+}

@@ -5,7 +5,39 @@ export default class SearchInput extends Component {
   constructor(props) {
     super(props)
 
+    this.setState({
+      value: ''
+    })
+
     this._onClick = this.onClick.bind(this)
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.value && props.value.trim() !== this.state.value.trim()) {
+      this.setState({
+        value: props.value
+      })
+    }
+  }
+
+  onBlur() {
+    if (!this.state.focused) return
+
+    this.setState({
+      focused: false
+    })
+
+    this.props.onBlur()
+  }
+
+  onFocus() {
+    if (this.state.focused) return
+
+    this.setState({
+      focused: true
+    })
+
+    this.props.onFocus()
   }
 
   componentDidMount() {
@@ -27,18 +59,22 @@ export default class SearchInput extends Component {
   }
 
   onClick(e) {
-    if (this.state.value === '' && !document.querySelector('.content-wrapper .content').contains(e.target)) {
-      this.props.onBlur()
+    if (this.state.value === '' && !document.querySelector('.content-wrapper .content').contains(e.target) && !e.target.classList.contains('button')) {
+      this.onBlur()
     }
   }
 
-  onQueryChange(value, keyCode) {
+  onQueryChange(value, keyCode, event) {
+    if (value.trim() !== "") {
+      this.onFocus()
+    }
+
     if (keyCode === 13) {
       return this.props.onPressEnter(value)
     }
 
     if (keyCode === 27) {
-      return this.props.onBlur()
+      return this.onBlur()
     }
 
     this.setState({ value })
@@ -64,7 +100,7 @@ export default class SearchInput extends Component {
 
   renderIcon() {
     return (
-        <Icon name="search" onclick={() => this.input.focus()} />
+      <Icon name="search" onclick={() => this.input.focus()} />
     )
   }
 
@@ -75,9 +111,10 @@ export default class SearchInput extends Component {
         type="text"
         className="input"
         placeholder="Search or enter website name."
-        onFocus={e => this.props.onFocus()}
-        onChange={e => this.onQueryChange(e.target.value)}
-        onKeyUp={e => this.onQueryChange(e.target.value, e.keyCode)}
+        onFocus={e => this.onFocus()}
+        onChange={e => this.onQueryChange(e.target.value, undefined, 'change')}
+        onKeyUp={e => this.onQueryChange(e.target.value, e.keyCode, 'key up')}
+        onClick={() => this.onFocus()}
         value={this.state.value} />
     )
   }

@@ -8,11 +8,12 @@ import BookmarkSearch from "./bookmark-search"
 import History from "./history"
 import BookmarkTags from "./bookmark-tags"
 
-
 import Sidebar from "./sidebar"
+import Tagbar from "./tagbar"
 import Messaging from "./messaging"
 import URLIcon from "./url-icon"
 import Icon from "./icon"
+import OpenWebsite from './open-website'
 
 const MAX_ITEMS = 5
 
@@ -22,12 +23,13 @@ export default class Results extends Component {
     this.messages = new Messaging()
 
     this.categories = [
-      new QuerySuggestions(this, 1),
-      new TopSites(this, 2),
-      new RecentBookmarks(this, 3),
-      new BookmarkTags(this, 4),
-      new BookmarkSearch(this, 5),
-      new History(this, 6)
+      new OpenWebsite(this, 1),
+      new QuerySuggestions(this, 2),
+      new TopSites(this, 3),
+      new RecentBookmarks(this, 4),
+      new BookmarkTags(this, 5),
+      new BookmarkSearch(this, 6),
+      new History(this, 7)
     ]
 
     this._onKeyPress = debounce(this.onKeyPress.bind(this), 50)
@@ -43,6 +45,16 @@ export default class Results extends Component {
       urlMap[this.state.content[i].url] = true
     }
 
+    let tags = this.state.tags
+    i = rows.length;
+    while (i--) {
+      if (rows[i].tags) {
+        tags = tags.concat(rows[i].tags)
+      }
+    }
+
+    tags = tags.filter(t => 'tag:' + t !== this.props.query)
+
     const content = this.state.content.concat(rows.filter(r => !urlMap[r.url]).slice(0, this.max()).map((r, i) => {
       r.category = category
       r.index = this.state.content.length + i
@@ -50,7 +62,8 @@ export default class Results extends Component {
     }))
 
     this.setState({
-      content
+      content,
+      tags
     })
   }
 
@@ -115,7 +128,7 @@ export default class Results extends Component {
     const len = this.state.content.length
     let i = -1
     while (++i < len) {
-      if (this.state.content[i].category.name !== 'query-suggestions') {
+      if (!this.state.content[i].category.pinned) {
         break;
       }
     }
@@ -127,6 +140,7 @@ export default class Results extends Component {
     this.setState({
       selected: 0,
       content: [],
+      tags: [],
       errors: [],
       query: query || ''
     })
@@ -134,9 +148,8 @@ export default class Results extends Component {
 
   update(query) {
     query = query.trim()
-
     this.reset()
-    this.categories.forEach(c => c.update(query))
+    this.categories.forEach(c => c.onNewQuery(query))
   }
 
   select(index) {
@@ -223,6 +236,14 @@ export default class Results extends Component {
       this.selectNextCategory()
       e.preventDefault()
       e.stopPropagation()
+    } else if (e.ctrlKey && e.keyCode == 37) {
+      this.props.prevWallpaper()
+      e.preventDefault()
+      e.stopPropagation()
+    } else if(e.ctrlKey && e.keyCode == 39) {
+      this.props.nextWallpaper()
+      e.preventDefault()
+      e.stopPropagation()
     }
   }
 
@@ -230,12 +251,15 @@ export default class Results extends Component {
     this.counter = 0
 
     return (
-      <div className="results">
-        <div className="results-categories">
-          {this.contentByCategory().map(category => this.renderCategory(category))}
+      <div className={`results ${this.state.tags.length ? "has-tags" : ""}`}>
+        <div className="links">
+          <div className="results-categories">
+            {this.contentByCategory().map(category => this.renderCategory(category))}
+          </div>
+          <Sidebar selected={this.content()[this.state.selected]} messages={this.messages} onUpdateTopSites={() => this.onUpdateTopSites()} updateFn={() => this.update(this.props.query || "")} />
+          <div className="clear"></div>
         </div>
-        <Sidebar selected={this.content()[this.state.selected]} messages={this.messages} onUpdateTopSites={() => this.onUpdateTopSites()} updateFn={() => this.update(this.props.query || "")} />
-        <div className="clear"></div>
+        <Tagbar query={this.props.query} openTag={this.props.openTag} content={this.state.tags} />
       </div>
     )
   }

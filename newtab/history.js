@@ -8,9 +8,11 @@ export default class History extends Rows {
     this.title = 'Previously Visited'
   }
 
-  update(query) {
-    if (!query) return this.add([])
+  shouldBeOpen(query) {
+    return query.length > 1 && query.trim().length > 1
+  }
 
+  update(query) {
     chrome.history.search({ text: query }, history => {
       this.add(history.filter(filterOutSearch))
     })

@@ -7,9 +7,11 @@ export default class ListBookmarksByTag extends Rows {
     this.title = query => `Tagged with ${query.slice(4)} On Kozmos`
   }
 
-  update(query) {
-    if (!query || query.indexOf('tag:') !== 0 || query.length < 5) return this.add([])
+  shouldBeOpen(query) {
+    return query && query.indexOf('tag:') === 0 && query.length > 4
+  }
 
+  update(query) {
     const oquery = query || this.results.props.query
 
     this.results.messages.send({ task: 'search-bookmarks', query }, resp => {

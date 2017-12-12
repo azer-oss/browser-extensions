@@ -10,13 +10,21 @@
     key: "minimalMode",
     title: "Enable Minimal Mode",
     desc: "Hide majority of the interface until user focuses.",
-    defaultValue: false,
+    defaultValue: true,
     newtab: true
   },
   {
     key: "showWallpaper",
     title: "Show Wallpaper",
     desc: "Get a new beautiful photo in your new tab every day.",
+    defaultValue: true,
+    newtab: true
+  },
+  ,
+  {
+    key: "enableGreeting",
+    title: "Show greeting & time",
+    desc: "See your name, and a nice clock.",
     defaultValue: false,
     newtab: true
   },

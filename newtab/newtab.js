@@ -18,6 +18,7 @@ class NewTab extends Component {
   loadSettings(avoidCache) {
     this.loadSetting('minimalMode', avoidCache)
     this.loadSetting('showWallpaper', avoidCache)
+    this.loadSetting('enableGreeting', avoidCache)
   }
 
   checkIfDisabled() {
@@ -77,6 +78,18 @@ class NewTab extends Component {
 		})
   }
 
+  prevWallpaper() {
+    this.setState({
+      wallpaperIndex: (this.state.wallpaperIndex || 0) - 1
+    })
+  }
+
+  nextWallpaper() {
+    this.setState({
+      wallpaperIndex: (this.state.wallpaperIndex || 0) + 1
+    })
+  }
+
   render() {
     if (this.state.disabled) return
 
@@ -84,8 +97,8 @@ class NewTab extends Component {
       <div className={`newtab ${this.state.showWallpaper ? "has-wallpaper" : ""} ${this.state.minimalMode ? "minimal" : ""}`}>
         {this.state.minimalMode ? null : <Logo />}
         <Settings onChange={() => this.loadSettings(true)} messages={this.messages} type="newtab" />
-        <Search settings={this.settings} />
-        { this.state.showWallpaper ? <Wallpaper messages={this.messages} /> : null }
+        <Search nextWallpaper={() => this.nextWallpaper()} prevWallpaper={() => this.prevWallpaper()} enableGreeting={this.state.enableGreeting} settings={this.settings} />
+        { this.state.showWallpaper ? <Wallpaper index={this.state.wallpaperIndex} messages={this.messages} /> : null }
       </div>
     )
   }
