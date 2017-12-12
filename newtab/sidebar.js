@@ -31,6 +31,8 @@ export default class Sidebar extends Component {
         like: resp.content.like
       })
     })
+
+    setTimeout(this.props.onChange, 1000)
   }
 
   unlike() {
@@ -39,6 +41,8 @@ export default class Sidebar extends Component {
         like: null
       })
     })
+
+    setTimeout(this.props.onChange, 1000)
   }
 
   render() {

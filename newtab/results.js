@@ -183,7 +183,7 @@ export default class Results extends Component {
   }
 
   update(query) {
-    query = query.trim()
+    query = (query || "").trim()
     this.reset()
     this.state.categories.forEach(c => c.onNewQuery(query))
   }
@@ -301,7 +301,7 @@ export default class Results extends Component {
           <div className="results-categories">
             {this.contentByCategory().map(category => this.renderCategory(category))}
           </div>
-          <Sidebar selected={this.content()[this.state.selected]} messages={this.messages} onUpdateTopSites={() => this.onUpdateTopSites()} updateFn={() => this.update(this.props.query || "")} />
+          <Sidebar onChange={() => this.update()} selected={this.content()[this.state.selected]} messages={this.messages} onUpdateTopSites={() => this.onUpdateTopSites()} updateFn={() => this.update(this.props.query || "")} />
           <div className="clear"></div>
         </div>
         <Tagbar query={this.props.query} openTag={this.props.openTag} content={this.state.tags} />
