@@ -8,6 +8,7 @@ export default class ContentMessageProxy extends Messaging {
   }
 
   listenForMessages() {
+    console.log("Kozmos' extension is installed and it's listening for messages")
     chrome.runtime.onMessage.addListener(msg => this.onReceive(msg))
     addEventListener("message", event => this.onReceive(event.data))
   }
@@ -20,7 +21,7 @@ export default class ContentMessageProxy extends Messaging {
 
   sendMessageToWeb(msg) {
     msg.proxy = this.name
-    postMessage(msg, config.host)
+    postMessage(msg, document.location.origin)
   }
 
   sendMessageToBackground(msg) {

@@ -83,7 +83,7 @@ export default class TaggingForm extends Component {
   render() {
     return (
       <div className="tagging-form">
-        <Input onPressEnter={value => this.addTag(value)} onTypeComma={value => this.addTag(value)} icon="tag" placeholder="Type a tag & hit enter" />
+        <Input onPressEnter={value => this.addTag(value)} onTypeComma={value => this.addTag(value)} icon="tag" placeholder="Type a tag & hit enter" autofocus />
         {this.renderTags()}
       </div>
     )

@@ -10,7 +10,7 @@
     key: "recentBookmarksFirst",
     title: "Recent Bookmarks First",
     desc: "Move Recent Bookmarks Over Frequently Visited",
-    defaultValue: true,
+    defaultValue: false,
     newtab: true
   },
   {

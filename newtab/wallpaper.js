@@ -4,56 +4,8 @@ import wallpapers from './wallpapers'
 const ONE_DAY = 1000 * 60 * 60 * 24
 
 export default class Wallpaper extends Component {
-  componentWillMount() {
-    this.load()
-  }
-
-  componentWillReceiveProps(props) {
-    if (props.index !== this.props.index) {
-      this.load()
-    }
-  }
-
-  load() {
-    this.setState({
-      loading: true,
-      src: null
-    })
-
-    img(this.selected().url, err => {
-      if (err) return this.onError(err)
-
-      this.setState({
-        loading: false,
-        src: this.selected()
-      })
-    })
-
-    setTimeout(() => {
-      if (!this.state.loading || this.props.index) return
-
-      let start = Date.now()
-      let cached = img(this.url(this.src(this.yesterday())), err => {
-        if (err || !this.state.loading) return
-
-        this.setState({
-          src: this.src(this.yesterday())
-        })
-      })
-
-      setTimeout(() => {
-        cached.src = '';
-      }, 1000)
-    }, 500)
-  }
-
-  onError(error) {
-    console.error(error)
-
-    this.setState({
-      loading: false,
-      error
-    })
+  selected() {
+    return this.src(this.today()  + (this.props.index || 0))
   }
 
   today() {
@@ -63,16 +15,8 @@ export default class Wallpaper extends Component {
     return Math.floor(diff / ONE_DAY)
   }
 
-  yesterday() {
-    return this.today() - 1
-  }
-
   src(index) {
     return wallpapers[index % wallpapers.length]
-  }
-
-  selected() {
-    return this.src(this.today()  + (this.props.index || 0))
   }
 
   width() {
@@ -84,11 +28,10 @@ export default class Wallpaper extends Component {
   }
 
   render() {
-    if (!this.state.src) return
+    const src = this.selected()
 
-    const src = this.state.src
     const style = {
-      backgroundImage: `url(${this.url(this.state.src)})`
+      backgroundImage: `url(${this.url(src)})`
     }
 
     if (src.position) {

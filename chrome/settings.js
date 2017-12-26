@@ -11,6 +11,14 @@ class Settings {
     return result
   }
 
+  all() {
+    const result = sections.slice()
+    result.forEach(row => {
+      row.value = this.get(row.key)
+    })
+    return result
+  }
+
   get(key) {
     const content = this.read()
     if (content.hasOwnProperty(key)) {

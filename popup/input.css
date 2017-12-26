@@ -24,3 +24,7 @@
   font: 14px/1.3 "Open Sans", sans-serif;
   color: #333;
 }
+
+.input.light {
+  border: 0;
+}

@@ -29,6 +29,7 @@ export default class BackgroundTasks extends RemoteTasks {
       'get-version': this.getVersion,
       'get-settings-value': this.getSettingsValue,
       'set-settings-value': this.setSettingsValue,
+      'list-settings': this.getListOfSettings,
       'get-name': this.getName
     })
 
@@ -109,12 +110,17 @@ export default class BackgroundTasks extends RemoteTasks {
     auth(error => {
       if (error) return this.reply(msg, { error })
 
+      let query = msg.content.query
+      if (msg.content.query.indexOf('.com') === -1) {
+        query += '.com'
+      }
+
       const options = {
-        query: msg.content.query,
+        query: query,
         size: 25,
         from: 0,
         filter_by_typo: true,
-        filter_by_user: true
+        filter_by_user: false
       }
 
       api.post('/api/search', options, (error, content) => {
@@ -155,6 +161,10 @@ export default class BackgroundTasks extends RemoteTasks {
 
   setSettingsValue(msg) {
     this.reply(msg, { value: settings.set(msg.content.key, msg.content.value) })
+  }
+
+  getListOfSettings(msg) {
+    this.reply(msg, { settings: settings.all() })
   }
 
   getVersion(msg) {
