@@ -14,7 +14,7 @@
   border-top: 1px dotted #ddd;
 
   background: #fff;
-  min-height: 320px;
+  min-height: 370px;
   position: relative;
 }
 
@@ -96,7 +96,7 @@
 .minimal .focused .results .links {
   opacity: 1;
   max-height: 500px;
-  min-height: 320px;
+  min-height: 370px;
 }
 
 .minimal .results .tagbar {

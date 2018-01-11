@@ -1,5 +1,4 @@
 import { h, Component } from "preact"
-import img from "img"
 import wallpapers from './wallpapers'
 const ONE_DAY = 1000 * 60 * 60 * 24
 

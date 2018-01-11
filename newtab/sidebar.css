@@ -59,6 +59,7 @@
 }
 
 .sidebar .button {
+  display: block;
   margin: 5px 0;
   padding: 10px 10px 10px 35px;
   background: transparent;
@@ -71,6 +72,7 @@
   cursor: pointer;
   border: 1px solid #fff;
   border-radius: 3px;
+  text-decoration: none;
 }
 
 .sidebar .button .icon {

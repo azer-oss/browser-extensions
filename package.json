@@ -18,6 +18,7 @@
     "postcss-cli": "^4.1.0"
   },
   "dependencies": {
+    "bookmark-backup-parser": "github:kozmos/bookmark-backup-parser",
     "debounce-fn": "azer/debounce-fn",
     "img": "npm-dom/img",
     "likedb": "kozmos/likedb",
