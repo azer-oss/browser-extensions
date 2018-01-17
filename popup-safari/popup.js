@@ -40,6 +40,10 @@ class Popup extends Component {
       });
   }
 
+  resizePopover() {
+    safari.self.height = document.body.clientHeight;
+  }
+
   onStartLoading() {
     this.setState({
       isLoading: true
@@ -111,6 +115,10 @@ class Popup extends Component {
 
         this.updateActionIcon()
       })
+  }
+
+  componentDidUpdate() {
+    this.resizePopover();
   }
 
   render() {
