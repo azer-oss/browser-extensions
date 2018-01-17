@@ -86,6 +86,8 @@ export default class Sidebar extends Component {
   }
 
   renderCommentButton() {
+    if (!this.state.like) return
+
     const hostname = findHostname(this.state.like.url)
     const isHomepage = cleanURL(this.state.like.url).indexOf('/') === -1
 
