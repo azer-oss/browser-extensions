@@ -3,7 +3,8 @@ html, body, .newtab {
   height: 100%;
   padding: 0;
   margin: 0;
-  font: 400 14px "San Francisco", "Open Sans", "Verdana", sans-serif;
+  font: 400 14px "Open Sans", "Verdana", sans-serif;
+  background: #F9F9FA;
 }
 
 * {

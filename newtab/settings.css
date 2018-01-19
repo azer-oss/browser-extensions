@@ -3,83 +3,136 @@
   overflow: hidden;
   top: 0;
   right: 0;
-  width: 350px;
-  height: 100%;
-  max-width: 0;
-  background: rgba(10, 10, 10, 1);
-
-  -webkit-transition: all 0.2s ease-in;
-  -moz-transition: all 0.2s ease-in;
-  -o-transition: all 0.2s ease-in;
-  transition: all 0.2s ease-in;
-}
-
-.settings h1 {
-  margin: 32px 0 0 30px;
-  font-size: 16px;
-  color: #fff;
-  padding-bottom: 5px;
-}
-
-.settings h1 span {
-  border-bottom: 1px dotted #222;
-  padding: 0 0 7px 0;
-  letter-spacing: 0.8px;
+  width: 50px;
+  height: 50px;
+  z-index: 9999;
 }
 
 .settings.open {
-  max-width: 40%;
-}
-
-.settings .triangle {
-  display: none;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 20px 20px 20px 0;
-  border-color: transparent rgba(0, 0, 0, 0.95) transparent transparent;
-  position: absolute;
-  left: -20px;
-  top: 50%;
-  margin-top: -15px;
-}
-
-.settings.open .triangle {
+  width: 500px;
+  height: 100%;
   display: block;
 }
 
-.settings-button {
+.settings a {
+  color: #222;
+  text-decoration: none;
+  border-bottom: 1px dotted #ccc;
+}
+
+.settings a:hover {
+  color: #000;
+  border: 0;
+}
+
+
+.settings .icon {
   position: absolute;
-  right: 20px;
-  bottom: 20px;
-  padding: 10px;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: transparent;
-
-  -webkit-transition: top 0.3s ease-in;
-  -moz-transition: top 0.3s ease-in;
-  -o-transition: top 0.3s ease-in;
-  transition: top 0.3s ease-in;
-}
-
-.settings-button:hover {
-  border-color: rgba(255, 255, 255, 1);
-}
-
-.settings-button .icon {
-  width: 20px;
+  top: 15px;
+  right: 15px;
   height: 20px;
+  cursor: pointer;
+  color: #666;
 }
 
-.settings-button.with-close-icon {
-  padding: 10px;
-  top: 20px;
-  bottom: initial;
-  border-color: transparent;
+.settings .icon:hover {
   opacity: 1;
 }
 
-.settings-button.with-close-icon .icon {
-  width: 15px;
-  height: 15px;
+.settings .content {
+  visibility: hidden;
+  position: absolute;
+  height: calc(100% - 40px);
+  padding: 20px;
+  background: #fff;
+  border-left: 1px solid #D7D7DB;
+  box-shadow: 0 1px 4px 0 rgba(12, 12, 13, 0.1);
+  right: 0;
+  top: 0;
+  right: -500px;
+
+  -webkit-transition: all 0.1s ease-in;
+  -moz-transition: all 0.1s ease-in;
+  -o-transition: all 0.1s ease-in;
+  transition: all 0.1s ease-in;
+}
+
+.settings.open .content {
+  visibility: visible;
+  right: 0;
+}
+
+.settings .content h1 {
+  font: 24px "Open sans", sans-serif;
+  color: #111;
+  margin: 0 0 5px 0;
+}
+
+.settings .content h2 {
+  margin: 0 0 30px 0;
+  font: 14px "Open sans", sans-serif;
+  color: #666;
+}
+
+.settings .setting {
+  margin: 25px 0 0 0;
+  border-bottom: 1px dotted #ddd;
+}
+
+.settings .sections .setting:last-child {
+  border: 0;
+}
+
+.settings .setting label {
+  font: 16px "Open Sans", sans-serif;
+  color: #222;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.settings .setting label:hover {
+  color: #000;
+}
+
+.settings .setting p {
+  margin: 5px 0 0 0;
+  padding: 0 0 15px 25px;
+  font: 1.7 14px "Open Sans", sans-serif;
+  color: #666;
+}
+
+.settings .icon-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 13px;
+  padding: 7px;
+}
+
+.settings .icon-close:hover {
+  background: #eee;
+}
+
+.settings .footer {
+  width: 100%;
+  padding: 25px 0;
+  left: 0;
+  bottom: 0px;
+  text-align: right;
+  border-top: 1px solid #ddd;
+}
+
+.settings .footer button {
+  padding: 12px 20px;
+  font: 800 15px "Open Sans", sans-serif !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #c1a65d;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+}
+
+.settings .footer button:hover {
+  background: #20989d;
 }

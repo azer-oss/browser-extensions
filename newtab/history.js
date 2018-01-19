@@ -1,20 +1,28 @@
-import URLs from "./urls"
+import Rows from "./rows"
+import { findHostname } from './url-image'
 
-export default class History extends URLs {
-  constructor(props) {
-    super(props)
+export default class History extends Rows {
+  constructor(results, sort) {
+    super(results, sort)
     this.name = 'history'
+    this.title = 'Previously Visited'
   }
 
-  recent(callback) {
-    return this.top(callback)
+  shouldBeOpen(query) {
+    return query.length > 1 && query.trim().length > 1
   }
 
-  top(callback) {
-    chrome.topSites.get(result => callback(undefined, result))
+  update(query) {
+    chrome.history.search({ text: query }, history => {
+      this.add(history.filter(filterOutSearch))
+    })
   }
+}
 
-  filter(query, callback) {
-    chrome.history.search({ text: query.trim() }, result => callback(undefined, result))
-  }
+function filterOutSearch (row) {
+  return findHostname(row.url).split('.')[0] !== 'google'
+    && !/search\/?\?q\=\w*/.test(row.url)
+    && !/facebook\.com\/search/.test(row.url)
+    && !/twitter\.com\/search/.test(row.url)
+    && findHostname(row.url) !== 't.co'
 }

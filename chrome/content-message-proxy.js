@@ -8,6 +8,7 @@ export default class ContentMessageProxy extends Messaging {
   }
 
   listenForMessages() {
+    console.log("Kozmos' extension is installed and it's listening for messages")
     chrome.runtime.onMessage.addListener(msg => this.onReceive(msg))
     addEventListener("message", event => this.onReceive(event.data))
   }
@@ -19,18 +20,18 @@ export default class ContentMessageProxy extends Messaging {
   }
 
   sendMessageToWeb(msg) {
-    postMessage(msg, config.host)
+    msg.proxy = this.name
+    postMessage(msg, document.location.origin)
   }
 
   sendMessageToBackground(msg) {
+    msg.proxy = this.name
     chrome.runtime.sendMessage(msg)
   }
 
   sendMessage(msg) {
     if (msg.to === 'kozmos:web') return this.sendMessageToWeb(msg)
     if (msg.to === 'kozmos:background') return this.sendMessageToBackground(msg)
-
-    throw new Error('Message missing valid `to` field`')
   }
 
   send (msg, callback) {

@@ -1,7 +1,45 @@
+.search-input, .search-input .icon {
+  -webkit-transition: all 0.1s ease-in;
+  -moz-transition: all 0.1s ease-in;
+  -o-transition: all 0.1s ease-in;
+  transition: all 0.1s ease-in;
+}
+
 .search-input {
-  width: 430px;
-  max-width: 70%;
   margin: 0 auto;
+  padding: 3px 0;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 5px;
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.minimal .search-input {
+  /*box-shadow: 1px 1px 8px #ddd;*/
+  border-bottom: 1px solid #ddd;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.minimal .search-input input {
+  cursor: pointer;
+}
+
+.minimal .focused .search-input input {
+  cursor: text;
+}
+
+.has-wallpaper .search-input {
+  border: 0;
+}
+
+.minimal .focused .search-input {
+  box-shadow: none;
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .search-input .logo {
@@ -13,11 +51,11 @@
 }
 
 .search-input .input {
-  width: calc(100% - 45px);
+  width: calc(100% - 55px);
   height: 22px;
   color: #333;
-  padding: 10px 10px 10px 35px;
-  font: 400 18px "San Francisco", "Open Sans", Times, "Verdana", sans-serif;
+  padding: 10px 10px 10px 45px;
+  font: 400 18px "Open Sans", sans-serif;
   outline: none;
   border: 0;
   background: transparent;
@@ -29,8 +67,16 @@
 
 .search-input .icon {
   position: absolute;
-  margin: 11px 0 0 8px;
-  width: 20px;
-  height: auto;
-  opacity: 0.7;
+  margin: 9px 0 0 10px;
+  height: 25px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.search-input .icon:hover {
+  color: #aaa;
+}
+
+.focused .search-input .icon {
+  color: #888;
 }

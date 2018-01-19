@@ -1,0 +1,16 @@
+.urls {
+  margin-top: 15px;
+  padding-right: 15px;
+}
+
+.urls-content {
+  margin: 0 auto 10px auto;
+}
+
+.urls h1 {
+  font: 12px "PT Mono", sans-serif;
+  color: #888;
+  text-transform: uppercase;
+  padding: 0 0 5px 0;
+  margin: 0;
+}

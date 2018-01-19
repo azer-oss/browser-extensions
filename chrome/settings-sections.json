@@ -1,0 +1,45 @@
+[
+  {
+    key: "oneClickLike",
+    title: "One-click bookmarking",
+    desc: "Heart button will immediately bookmark when clicked.",
+    defaultValue: true,
+    popup: true
+  },
+  {
+    key: "recentBookmarksFirst",
+    title: "Recent Bookmarks First",
+    desc: "Move Recent Bookmarks Over Frequently Visited",
+    defaultValue: false,
+    newtab: true
+  },
+  {
+    key: "minimalMode",
+    title: "Enable Minimal Mode",
+    desc: "Hide majority of the interface until user focuses.",
+    defaultValue: true,
+    newtab: true
+  },
+  {
+    key: "showWallpaper",
+    title: "Show Wallpaper",
+    desc: "Get a new beautiful photo in your new tab every day.",
+    defaultValue: true,
+    newtab: true
+  },
+  {
+    key: "enableGreeting",
+    title: "Show greeting & time",
+    desc: "See your name, and a nice clock.",
+    defaultValue: false,
+    newtab: true
+  },
+  {
+    key: "enableNewTab",
+    title: "Enable New Tab Interface",
+    desc: "Faster and easier search interface.",
+    defaultValue: true,
+    popup: true,
+    newtab: true
+  }
+]
