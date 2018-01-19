@@ -1,19 +1,16 @@
+import { db, setToken, isTokenSet } from "../lib/db"
+
 const config = require("../config")
 const icons = require("./icons")
 const iconListen = require("./iconListen")
 const tabs = require("./tabs")
 const likes = require("../lib/likes")
-const db = require("../lib/db")
 const urls = require("urls")
-import { Messaging } from '../popup-safari/messaging';
-import { read } from "../chrome/cookies";
-import { Promise } from "q";
-import { error } from "util";
 
 iconListen.listenForChanges()
 
-if (!db.isTokenSet() && localStorage['token']) {
-  db.setToken(localStorage['token']);
+if (!isTokenSet() && localStorage['token']) {
+  setToken(localStorage['token']);
 }
 
 
@@ -29,7 +26,7 @@ safari.application.addEventListener("command", function (event) {
 safari.application.addEventListener("message", function (event) {
   if (event.name === 'kozmos-token') {
     localStorage['token'] = event.message
-    db.setToken(event.message)
+    setToken(event.message)
   }
 });
 
@@ -45,9 +42,13 @@ window.listenForPopover = listenForPopover;
 
 function getLike(url) {
   return new Promise((res) => {
-    likes.isLiked(url, function (liked) {
-      res({ like: liked });
-    });
+    db.likes.get(urls.clean(url), (err, row) => {
+      if (row) res({ like: row })
+
+      db.likes.get(url, (err, row) => {
+        res({ like: row })
+      })
+    })
   })
 }
 window.getLike = getLike;
