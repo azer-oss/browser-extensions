@@ -27,7 +27,7 @@ compile-safari:
 	@$(BIN)/browserify safari/injected.js -o kozmos.safariextension/injected.js
 
 watch-newtab: compile-newtab
-	@$(BIN)/chokidar "newtab/*.js" "lib/*.js" "newtab/*.json" "newtab/*.css" "newtab/*.html" \
+	@$(BIN)/chokidar "newtab/*.js" "lib/*.js" "chrome/*.js" "chrome/*.json" "newtab/*.json" "newtab/*.css" "newtab/*.html" \
 		-c 'if [[ {path} == *.js ]]; then make compile-newtab-js; elif [[ {path} == *.json ]]; then make compile-newtab-js; else; make compile-newtab-html; fi'
 
 compile-newtab: compile-newtab-js compile-newtab-html

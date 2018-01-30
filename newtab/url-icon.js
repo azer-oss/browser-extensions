@@ -1,113 +1,60 @@
 import { h, Component } from "preact"
-import icons from './icons'
-import img from 'img'
-import titleFromURL from "title-from-url"
-import { join } from "path"
-
-const popularIcons = {
-  'facebook.com': 'https://static.xx.fbcdn.net/rsrc.php/v3/yx/r/N4H_50KFp8i.png',
-  'twitter.com': 'https://ma-0.twimg.com/twitter-assets/responsive-web/web/ltr/icon-ios.a9cd885bccbcaf2f.png',
-  'youtube.com': 'https://m.youtube.com/yts/mobile/img/apple-touch-icon-144x144-precomposed-vflwq-hLZ.png',
-  'amazon.com': 'https://images-na.ssl-images-amazon.com/images/G/01/anywhere/a_smile_120x120._CB368246573_.png',
-  'google.com': 'https://www.google.com/images/branding/product_ios/2x/gsa_ios_60dp.png',
-  'yahoo.com': 'https://www.yahoo.com/apple-touch-icon-precomposed.png',
-  'reddit.com': 'https://www.redditstatic.com/mweb2x/favicon/120x120.png',
-  'instagram.com': 'https://www.instagram.com/static/images/ico/apple-touch-icon-120x120-precomposed.png/004705c9353f.png'
-}
+import img from "img"
+import { clean as cleanURL } from "urls"
+import * as titles from "./titles"
+import URLImage from './url-image'
 
 export default class URLIcon extends Component {
-  componentWillReceiveProps(props) {
-    this.preload(this.imageURL(props))
+  shouldComponentUpdate(nextProps) {
+    return this.props.content.url !== nextProps.content.url ||
+      this.props.selected !== nextProps.selected ||
+      this.props.type !== nextProps.type
   }
 
-  componentWillMount() {
-    this.preload(this.imageURL())
+  select() {
+    this.props.onSelect(this.props.content)
   }
 
   render() {
     return (
-      <a className="urlicon" href={this.url()} title={`${this.title()} - ${this.props.url}`}>
-        {this.renderImage()}
+      <a id={this.props.content.id} className={`urlicon ${this.props.selected ? "selected" : ""}`} href={this.url()} title={`${this.title()} - ${cleanURL(this.props.content.url)}`} onMouseMove={() => this.select()}>
+        <URLImage content={this.props.content} icon-only />
         <div className="title">
-        {this.title()}
+          {this.title()}
         </div>
+        <div className="url">
+          {this.prettyURL()}
+        </div>
+        <div className="clear"></div>
       </a>
     )
   }
 
-  renderImage() {
-    if (this.state.loading || !this.state.image) return this.renderDefaultImage()
-
-    const style = {
-      backgroundImage: `url(${this.state.image})`
-    }
-
-    return (
-      <div className="image" style={style}></div>
-    )
-  }
-
-  renderDefaultImage() {
-    return (
-      <img className="default-image" src={icons.black.page} />
-    )
-  }
-
   title() {
-    const original = this.props.title || ""
-    if (original.length > 0 && !/^https?:\/\//.test(original)) return original.replace(/^\(\d+\) /, '')
-    return titleFromURL(original)
-  }
-
-  url(props) {
-    if (/^https?:\/\//.test((props || this.props).url)) return (props || this.props).url
-    return 'http://' + (props || this.props).url
-  }
-
-  protocol(props) {
-    if (!/^https?:\/\//.test((props || this.props).url)) {
-      return 'http'
+    if (this.props.content.type === 'search-query') {
+      return this.props.content.title
     }
 
-    return (props || this.props).url.split('://')[0]
-  }
-
-  hostname(props) {
-    return (props || this.props).url.replace(/^\w+:\/\//, '').split('/')[0].replace(/^www\./, '')
-  }
-
-  imageURL(props) {
-    const hostname = this.hostname(props)
-
-    if (popularIcons[hostname]) {
-      return popularIcons[hostname]
+    if (this.props.content.type === 'url-query') {
+      return `Open ${cleanURL(this.props.content.url)}`
     }
 
-    if ((props || this.props).icon) {
-      return absoluteIconURL(props || this.props)
+    if (this.props.content.title && titles.isValid(this.props.content.title)) {
+      return titles.normalize(this.props.content.title)
     }
 
-    return this.protocol(props) + '://' + hostname + '/favicon.ico'
+    return titles.generateFromURL(this.props.content.url)
   }
 
-  preload(url) {
-    this.setState({
-      loading: true,
-      image: null
-    })
+  url() {
+    if (/^https?:\/\//.test(this.props.content.url)) {
+      return this.props.content.url
+    }
 
-    img(url, err => {
-      if (err) return this.setState({ loading: false, image: null })
-
-      this.setState({
-        image: url,
-        loading: false
-      })
-    })
+    return 'http://' + this.props.content.url
   }
-}
 
-function absoluteIconURL (like) {
-  if (/^https?:\/\//.test(like.icon)) return like.icon
-  return 'http://' + join(like.url.split('/')[0], like.icon)
+  prettyURL() {
+    return cleanURL(this.url())
+  }
 }

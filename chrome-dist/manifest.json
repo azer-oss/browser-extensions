@@ -1,12 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "Kozmos - Bookmarking Made Simple",
-  "description": "Free, simple and private. Kozmos is the best bookmarking service!",
-  "version": "4.1",
+  "name": "Kozmos - Bookmarking Simplified for Everyone",
+  "description": "Free, fast, unlimited and beautiful bookmarking service for everyone.",
+  "version": "7.3",
   "browser_action": {
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos",
     "default_popup": "popup.html"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
   },
   "content_scripts": [
     {
@@ -14,10 +17,14 @@
         "http://getkozmos.com/*",
         "http://*.getkozmos.com/*",
         "https://getkozmos.com/*",
-        "https://*.getkozmos.com/*"
+        "https://*.getkozmos.com/*",
+        "http://test.kozmos.cool/*",
+        "http://*.test.kozmos.cool/*",
+        "https://test.kozmos.cool/*",
+        "https://*.test.kozmos.cool/*"
       ],
       "all_frames": true,
-      "js": ["content.js"]
+      "js": ["./content.js"]
     }
   ],
   "background": {

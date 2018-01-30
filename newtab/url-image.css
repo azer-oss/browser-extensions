@@ -1,0 +1,10 @@
+.generated-image {
+  color: #fff;
+  position: relative;
+  text-align: center;
+}
+
+.generated-image span {
+  font: 300 16px "Open Sans", sans-serif;
+  top: 50%;
+}

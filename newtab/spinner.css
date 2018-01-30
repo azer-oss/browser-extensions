@@ -1,11 +1,13 @@
 .spinner {
-
+  width: 60px;
+  margin: 0 auto;
+  padding: 25px 0;
 }
 
 .spinner > div {
   width: 18px;
   height: 18px;
-  background-color: #fff;
+  background-color: #ccc;
   border-radius: 100%;
   display: inline-block;
   -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;

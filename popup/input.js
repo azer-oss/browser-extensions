@@ -14,6 +14,10 @@ export default class Input extends Component {
     if (this.props.autofocus) this.focus()
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.value !== this.state.value
+  }
+
   focus () {
     this.el.focus()
   }

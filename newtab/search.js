@@ -1,151 +1,99 @@
 import { h, Component } from "preact"
-import Content from "./content"
-import Messaging from "./messaging"
-import SearchInput from "./search-input"
 import debounce from "debounce-fn"
+import Content from "./content"
+import SearchInput from "./search-input"
+import Results from "./results"
+import Messaging from "./messaging"
+import Greeting from "./greeting"
 
 export default class Search extends Component {
   constructor(props) {
     super(props)
     this.messages = new Messaging()
-    this.searchBookmarks = debounce(this._searchBookmarks.bind(this), 600)
 
     this.setState({
+      id: 0,
+      rows: {},
+      rowsAvailable: 5,
       query: '',
-      likes: [],
-      topSites: []
+      focused: false
     })
 
-    chrome.topSites.get(topSites => this.setState({ topSites: topSites.slice(0, 5) }))
-    this.getRecentBookmarks((err, likes) => this.setState({ likes }))
+    this._onQueryChange = debounce(this.onQueryChange.bind(this), 50)
   }
 
-  getRecentBookmarks(callback) {
-    this.messages.send({ task: 'get-recent-bookmarks' }, resp => {
-      if (resp.error) return callback(new Error(resp.error))
-      callback(undefined, resp.media.concat(resp.non_media).sort(sortLikes).slice(0, 5))
+  id() {
+    return ++this.state.id
+  }
+
+  onFocus() {
+    this.setState({
+      focused: true
     })
   }
 
-  _searchBookmarks(query, callback) {
-    this.messages.send({ task: 'search-bookmarks', query }, resp => {
-      if (resp.content.query !== this.state.query) return
-      if (resp.error) return callback(new Error(resp.error))
-      callback(undefined, resp.content)
+  onBlur() {
+    this.setState({
+      focused: false
+    })
+  }
+
+  onPressEnter() {
+    if (this.state.selected) {
+      this.navigateTo(this.state.selected.url)
+    }
+  }
+
+  onSelect(row) {
+    if (this.state.selected && this.state.selected.id === row.id) return
+
+    this.setState({
+      selected: row
     })
   }
 
   onQueryChange(query) {
+    query = query.trim()
+
     if (query === this.state.query) return
 
-    if (query.length == 0) {
-      return this.setState({
-        loading: false,
-        likes: [],
-        query: ""
-      })
-    }
-
-    if (query === this.state.query.trim()) return
-
     this.setState({
-      loading: true,
-      likes: [],
-      history: [],
+      rows: {},
+      rowsAvailable: 5,
+      selected: null,
+      id: 0,
       query
-    })
-
-    this.searchBookmarks(query.trim(), (error, result) => {
-      if (error) return this.setState({ error })
-
-      this.setState({
-        likes: result.media.concat(result.non_media).sort(sortLikes),
-        loading: false
-      })
-    })
-
-    chrome.history.search({ text: query.trim() }, history => {
-      this.setState({
-        history
-      })
     })
   }
 
   render() {
     return (
-      <Content wallpaper={this.props.wallpaper}>
-        <div className="bookmarks">
-          <SearchInput query={this.state.query} onQueryChange={query => this.onQueryChange(query)} />
-          {this.renderTopSites()}
-          {this.renderHistory()}
-          {this.renderLikes()}
-          {this.renderLoading()}
-          {this.renderNoResults()}
+      <Content wallpaper={this.props.wallpaper} focused={this.state.focused}>
+        <div className="content-inner">
+          {this.props.enableGreeting ? <Greeting name={this.state.username} messages={this.messages} /> : null}
+          <SearchInput onPressEnter={() => this.onPressEnter()}
+            onQueryChange={this._onQueryChange}
+            onFocus={() => this.onFocus()}
+            onBlur={() => this.onBlur()}
+            value={this.state.query}
+            />
+            <Results recentBookmarksFirst={this.props.recentBookmarksFirst} nextWallpaper={this.props.nextWallpaper} prevWallpaper={this.props.prevWallpaper} openTag={tag => this._onQueryChange('tag:' + tag)} focused={this.state.focused} query={this.state.query} />
+            <div className="clear"></div>
         </div>
       </Content>
     )
   }
 
-  renderTopSites() {
-    if (this.state.query) return
-
+  renderResults() {
     return (
-      <div className="top-sites urls">
-        {this.state.topSites.map(site => <URLIcon {...site} />)}
+      <div className="results">
+        <div className="results-rows">
+        </div>
         <div className="clear"></div>
       </div>
     )
   }
 
-  renderHistory() {
-    if (!this.state.history || this.state.history.length === 0) return
-
-    return (
-      <div className="history urls">
-        {this.state.history.slice(0, 5).map(url => <URLIcon {...url} />)}
-        <div className="clear"></div>
-      </div>
-    )
-  }
-
-  renderLikes() {
-    return (
-      <div className="search-likes urls">
-        {this.state.likes.length > 10 ? this.renderMoreResultsLink() : null}
-        {this.state.likes.slice(0, 5).map(like => <URLIcon {...like} />)}
-        <div className="clear"></div>
-      </div>
-    )
-  }
-
-  renderMoreResultsLink() {
-    return (
-      <a className="more-results-button" href={`https://getkozmos.com/search?query=${this.state.query}`}>
-        See More Results
-      </a>
-    )
-  }
-
-  renderLoading() {
-    const query = this.state.query.trim()
-    if (!this.state.loading || query == "") return
-
-    return (
-      <div className="loading">
-        <Spinner />
-      </div>
-    )
-  }
-
-  renderNoResults() {
-    if (this.state.loading || this.state.query === "" || this.state.likes.length > 0) return
-
-    return (
-      <div className="loading">
-        <p>No Bookmarks Found For "<strong>{this.state.query}</strong>" :(</p>
-      </div>
-    )
-  }
 }
 
 function sortLikes(a, b) {

@@ -1,0 +1,46 @@
+.greeting {
+  margin-top: -120px;
+  position: absolute;
+  color: #333;
+  display: none;
+}
+
+.minimal .greeting {
+  display: block;
+  width: 500px;
+}
+
+.content.focused .greeting {
+  display: none;
+}
+
+.greeting .message {
+  float: left;
+  width: 50%;
+  font: 28px/1.6 "Open Sans", sans-serif;
+  margin-top: 16px;
+
+}
+
+.greeting .message .name {
+  font-weight: 600;
+}
+
+.greeting .time {
+  float: right;
+  width: 50%;
+  text-align: right;
+  font: 500 80px "Open Sans", sans-serif;
+}
+
+.has-wallpaper .greeting {
+  color: #fff;
+}
+
+.has-wallpaper .greeting .time {
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.has-wallpaper .greeting .message {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}

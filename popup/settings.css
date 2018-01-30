@@ -1,0 +1,36 @@
+.settings {
+  padding: 0 15px;
+}
+
+.settings h2 {
+  font: 600 18px "Open sans", sans-serif;
+  color: #333;
+  padding: 0;
+  margin: 10px 0 20px 0;
+}
+
+.settings .sections {
+
+}
+
+.settings .setting {
+  margin: 5px 0;
+}
+
+.settings .setting label {
+  font: 16px "Open Sans", sans-serif;
+  color: #222;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.settings .setting label:hover {
+  color: #000;
+}
+
+.settings .setting p {
+  margin: 5px 0 0 0;
+  padding: 0 0 15px 25px;
+  font: 1.7 12px "Open Sans", sans-serif;
+  color: #666;
+}

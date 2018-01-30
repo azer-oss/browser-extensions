@@ -83,7 +83,7 @@ export default class TaggingForm extends Component {
   render() {
     return (
       <div className="tagging-form">
-        <Input onPressEnter={value => this.addTag(value)} onTypeComma={value => this.addTag(value)} icon="tag" placeholder="Type a tag & hit enter" />
+        <Input onPressEnter={value => this.addTag(value)} onTypeComma={value => this.addTag(value)} icon="tag" placeholder="Type a tag & hit enter" autofocus />
         {this.renderTags()}
       </div>
     )
@@ -106,8 +106,8 @@ export default class TaggingForm extends Component {
 
     return (
       <div className="tag">
-        {tag.name}
         <Icon name="close" stroke="5" title={`Delete "${tag.name}"`} onclick={() => this.deleteTag(tag.name)} />
+        {tag.name}
       </div>
     )
   }

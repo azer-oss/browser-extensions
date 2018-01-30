@@ -9,6 +9,7 @@ proxy.send({
   'to': 'kozmos:background',
   'content': {
     'task': 'set-token',
-    'token': localStorage['token']
+    'token': localStorage['token'],
+    'name': localStorage['name']
   }
 })
