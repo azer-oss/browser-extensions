@@ -24,8 +24,10 @@ class Popup extends Component {
       title: tab.title
     })
 
+    this.onStartLoading();
     safari.extension.globalPage.contentWindow.getLike(tab.url)
       .then((resp) => {
+        this.onStopLoading();
         if (resp) {
           this.setState({
             like: resp.like,
@@ -81,7 +83,7 @@ class Popup extends Component {
   }
 
   close() {
-    window.close()
+    safari.self.hide();
   }
 
   like() {

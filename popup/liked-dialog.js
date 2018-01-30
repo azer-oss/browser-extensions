@@ -9,16 +9,6 @@ export default class LikedDialog extends Component {
     this.reset(props)
   }
 
-  componentWillReceiveProps(props) {
-    if (this.props.like.url !== props.like.url) {
-      this.setState({
-        isLoading: true,
-        tags: []
-      })
-      this.load()
-    }
-  }
-
   reset(props) {
     this.setState({
       isOnline: navigator.onLine,

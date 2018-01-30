@@ -1,13 +1,13 @@
 import { db, setToken, isTokenSet } from "../lib/db"
 
+const debounce = require("debounce-fn")
+
 const config = require("../config")
 const icons = require("./icons")
 const iconListen = require("./iconListen")
 const tabs = require("./tabs")
 const likes = require("../lib/likes")
 const urls = require("urls")
-
-iconListen.listenForChanges()
 
 if (!isTokenSet() && localStorage['token']) {
   setToken(localStorage['token']);
@@ -29,6 +29,19 @@ safari.application.addEventListener("message", function (event) {
     setToken(event.message)
   }
 });
+
+const _onCurrentURLUpdated = debounce(onCurrentURLUpdated, 200)
+
+function onCurrentURLUpdated(event) {
+  iconListen.onCurrentURLUpdated();
+  safari.extension.popovers[0].contentWindow.Popover.close();
+}
+
+function listenForTabChanges() {
+  tabs.onUpdated(_onCurrentURLUpdated)
+}
+
+listenForTabChanges();
 
 function listenForPopover() {
   safari.application.addEventListener("popover", (event) => {

@@ -27,7 +27,7 @@ export default class Dialog extends Component {
           Looks like you haven't logged in yet.
 
         </div>
-        <Button title="Login Kozmos" onClick={() => {tabs.create('https://getkozmos.com/login'); safari.self.hide();}}>
+        <Button title="Login Kozmos" onClick={() => { tabs.create('https://getkozmos.com/login'); safari.self.hide(); }}>
           Login
         </Button>
       </div>
@@ -37,13 +37,13 @@ export default class Dialog extends Component {
   renderLiked() {
     return (
       <LikedDialog isJustLiked={this.state.isJustLiked}
-                   like={this.props.record}
-                   unlike={this.props.unlike}
-                   onStartLoading={this.props.onStartLoading}
-                   onStopLoading={this.props.onStopLoading}
-                   onSync={this.props.onSync}
-                   onError={this.props.onError}
-                   />
+        like={this.props.record}
+        unlike={this.props.unlike}
+        onStartLoading={this.props.onStartLoading}
+        onStopLoading={this.props.onStopLoading}
+        onSync={this.props.onSync}
+        onError={this.props.onError}
+      />
     )
   }
 
