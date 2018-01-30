@@ -5,9 +5,9 @@
 	<key>Author</key>
 	<string>Kozmos</string>
 	<key>Builder Version</key>
-	<string>11601.6.17</string>
+	<string>13604.4.7.1.3</string>
 	<key>CFBundleDisplayName</key>
-	<string>Kozmos</string>
+	<string>Kozmos (Dev)</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.kozmos.kozmos-safari</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -22,6 +22,17 @@
 		<integer>10485760</integer>
 		<key>Global Page</key>
 		<string>global.html</string>
+		<key>Popovers</key>
+		<array>
+			<dict>
+				<key>Filename</key>
+				<string>popup.html</string>
+				<key>Identifier</key>
+				<string>kozmosPopover</string>
+				<key>Width</key>
+				<integer>254</integer>
+			</dict>
+		</array>
 		<key>Toolbar Items</key>
 		<array>
 			<dict>
@@ -33,6 +44,10 @@
 				<true/>
 				<key>Label</key>
 				<string>Kozmos</string>
+				<key>Palette Label</key>
+				<string>kozmos</string>
+				<key>Popover</key>
+				<string>kozmosPopover</string>
 				<key>Tool Tip</key>
 				<string>Like This Page</string>
 			</dict>
@@ -51,7 +66,7 @@
 	<key>Description</key>
 	<string>The simpliest way to manage your bookmarks!</string>
 	<key>DeveloperIdentifier</key>
-	<string>7D65EW45T8</string>
+	<string>0000000000</string>
 	<key>ExtensionInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>Permissions</key>
