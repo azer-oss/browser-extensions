@@ -4,9 +4,20 @@ import LikedDialog from "./liked-dialog"
 import Input from "./input"
 import Settings from "../newtab/settings"
 
+/**
+ * Check to see if the extension is running on Chrome or Safari
+ * and require the respective tabs module
+ */
+let tabs;
+if (typeof chrome !== "undefined") {
+  tabs = require("../chrome/tabs");
+} else if (typeof safari !== "undefined") {
+  tabs = require("../safari/tabs");
+}
+
 export default class Dialog extends Component {
   search(value) {
-    chrome.tabs.create({ url: 'https://getkozmos.com/search?q=' + encodeURI(value) })
+    tabs.create('https://getkozmos.com/search?q=' + encodeURI(value))
   }
 
   render() {
@@ -26,7 +37,7 @@ export default class Dialog extends Component {
           Looks like you haven't logged in yet.
 
         </div>
-        <Button title="Login Kozmos" onClick={() => chrome.tabs.create({ url: 'https://getkozmos.com/login' })}>
+        <Button title="Login Kozmos" onClick={() => tabs.create('https://getkozmos.com/login')}>
           Login
         </Button>
       </div>

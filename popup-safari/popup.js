@@ -1,7 +1,7 @@
 import { h, Component, render } from "preact"
 import tabs from "../safari/tabs"
 import { setAsLiked, setAsNotLiked, setAsLoading } from "../safari/icons"
-import Dialog from "./dialog"
+import Dialog from "../popup/dialog"
 import { Icon } from '../popup/icon';
 
 class Popup extends Component {

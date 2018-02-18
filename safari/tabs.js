@@ -7,7 +7,8 @@ module.exports = {
 }
 
 function create (url) {
-  safari.application.activeBrowserWindow.openTab().url = url
+  safari.application.activeBrowserWindow.openTab().url = url;
+  safari.self.hide();
 }
 
 function current () {
