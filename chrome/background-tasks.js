@@ -5,7 +5,9 @@ import settings from "./settings"
 import * as api from "../lib/api"
 import * as auth from '../lib/auth'
 import { current as getCurrentTab } from "./tabs"
-import { db, onError, onPostUpdates, onReceiveUpdates } from "../lib/db"
+import { db,
+         setAPIAccessToken as setDBAPIAccessToken,
+         onError, onPostUpdates, onReceiveUpdates } from "../lib/db"
 import { version }  from "../chrome-dist/manifest.json"
 
 const HOMEPAGE_FILTER_THRESHOLD = 5
@@ -20,6 +22,9 @@ export default class BackgroundTasks extends RemoteTasks {
       'get-recent-bookmarks': auth.requiresAuth(this.getRecentBookmarks),
       'search-bookmarks': auth.requiresAuth(this.searchBookmarks),
       'get-website': auth.requiresAuth(this.getWebsite),
+      'get-tags': auth.requiresAuth(this.getTags),
+      'add-tags': auth.requiresAuth(this.addTags),
+      'delete-tag': auth.requiresAuth(this.deleteTag),
       'is-logged-in': this.isLoggedIn,
       'set-user': this.setUser,
       'get-user': auth.requiresAuth(this.getUser),
@@ -78,6 +83,24 @@ export default class BackgroundTasks extends RemoteTasks {
 
     api.post('/api/search', options, (error, content) => {
       this.reply(msg, { content, error })
+    })
+  }
+
+  getTags(msg) {
+    api.post("/api/like-tags", { "url": msg.content.url }, (error, resp) => {
+      this.reply(msg, { tags: resp.tags, error })
+    })
+  }
+
+  addTags(msg) {
+    api.put('/api/like-tags', { tags: msg.content.tags, url: msg.content.url }, error => {
+      this.reply(msg, { error })
+    })
+  }
+
+  deleteTag(msg) {
+    api.del('/api/like-tags', { tag: msg.content.tag, url: msg.content.url }, error => {
+      this.reply(msg, { error })
     })
   }
 
@@ -159,7 +182,7 @@ export default class BackgroundTasks extends RemoteTasks {
     console.log('Kozmos extension received user auth info.')
     auth.save(msg.content.user)
 
-    db.setAPIAccessToken(parsed.access_token.key, parsed.access_token.secret)
+    setDBAPIAccessToken(parsed.access_token.key, parsed.access_token.secret)
   }
 
   getSettingsValue(msg) {

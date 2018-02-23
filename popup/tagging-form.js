@@ -1,11 +1,13 @@
 import { h, Component } from "preact"
 import Input from "./input"
 import Icon from "./icon"
-import * as api from "../lib/api"
+import Messaging from "./messaging"
 
 export default class TaggingForm extends Component {
   constructor(props) {
     super(props)
+
+    this.messages = new Messaging()
     this.load()
     this.setState({
       isLoading: true,
@@ -26,13 +28,13 @@ export default class TaggingForm extends Component {
   load() {
     this.props.onStartLoading()
 
-    api.post("/api/like-tags", { "url": this.props.like.url }, (err, resp) => {
+    this.messages.send({ task: 'get-tags', url: this.props.like.url }, resp => {
       this.props.onStopLoading()
 
-      if (err) return this.props.onError(err)
+      if (resp.error) return this.props.onError(resp.error)
 
       this.setState({
-        tags: resp.tags,
+        tags: resp.content.tags,
         isLoading: false
       })
     })
@@ -43,9 +45,9 @@ export default class TaggingForm extends Component {
 
     const tags = tag.split(/,\s*/)
 
-    api.put('/api/like-tags', { tags: tags, url: this.props.like.url }, err => {
+    this.messages.send({ task: 'add-tags', tags, url: this.props.like.url }, resp => {
       this.props.onStopLoading()
-      if (err) return this.props.onError(err)
+      if (resp.error) return this.props.onError(resp.error)
       this.load()
     })
 
@@ -57,9 +59,9 @@ export default class TaggingForm extends Component {
   deleteTag(tag) {
     this.props.onStartLoading()
 
-    api.delete('/api/like-tags', { tag: tag, url: this.props.like.url }, err => {
+    this.messages.send({ task: 'delete-tag', tag, url: this.props.like.url }, resp => {
       this.props.onStopLoading()
-      if (err) return this.props.onError(err)
+      if (resp.error) return this.props.onError(resp.error)
       this.load()
     })
 
