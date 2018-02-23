@@ -1,5 +1,5 @@
 import { h, Component, render } from "preact"
-import tabs from "../chrome/tabs"
+import { current as getCurrentTab } from "../chrome/tabs"
 import Messaging from "./messaging"
 import Icon from "./icon"
 import Dialog from "./dialog"
@@ -17,7 +17,7 @@ class Popup extends Component {
       })
     })
 
-    tabs.current((err, tab) => {
+    getCurrentTab((err, tab) => {
       if (err) return this.setState({ error: err })
 
       this.setState({

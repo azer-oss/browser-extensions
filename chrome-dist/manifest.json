@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Kozmos - Bookmarking Simplified for Everyone",
   "description": "Free, fast, unlimited and beautiful bookmarking service for everyone.",
-  "version": "7.3",
+  "version": "8.0",
   "browser_action": {
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos",

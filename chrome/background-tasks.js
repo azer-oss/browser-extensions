@@ -1,11 +1,11 @@
 import * as localBookmarks from "./local-bookmarks"
 import RemoteTasks from "../lib/remote-tasks"
-import tabs from "./tabs"
 import urls from "urls"
 import settings from "./settings"
+import * as api from "../lib/api"
+import * as auth from '../lib/auth'
+import { current as getCurrentTab } from "./tabs"
 import { db, onError, onPostUpdates, onReceiveUpdates } from "../lib/db"
-import { get as auth } from "./token"
-import api from "../lib/api"
 import { version }  from "../chrome-dist/manifest.json"
 
 const HOMEPAGE_FILTER_THRESHOLD = 5
@@ -17,20 +17,20 @@ export default class BackgroundTasks extends RemoteTasks {
     this.name = 'kozmos:background'
     this.map({
       'get-local-bookmarks': this.getLocalBookmarks,
-      'get-recent-bookmarks': this.getRecentBookmarks,
-      'search-bookmarks': this.searchBookmarks,
-      'get-website': this.getWebsite,
-      'get-personal-tags': this.getPersonalTags,
+      'get-recent-bookmarks': auth.requiresAuth(this.getRecentBookmarks),
+      'search-bookmarks': auth.requiresAuth(this.searchBookmarks),
+      'get-website': auth.requiresAuth(this.getWebsite),
       'is-logged-in': this.isLoggedIn,
-      'set-token': this.setToken,
+      'set-user': this.setUser,
+      'get-user': auth.requiresAuth(this.getUser),
+      'get-name': auth.requiresAuth(this.getName),
       'like': this.like,
       'unlike': this.unlike,
       'get-like': this.getLike,
       'get-version': this.getVersion,
       'get-settings-value': this.getSettingsValue,
       'set-settings-value': this.setSettingsValue,
-      'list-settings': this.getListOfSettings,
-      'get-name': this.getName
+      'list-settings': this.getListOfSettings
     })
 
     onError((err, action) => {
@@ -70,72 +70,50 @@ export default class BackgroundTasks extends RemoteTasks {
   }
 
   getRecentBookmarks(msg) {
-    auth(error => {
-      if (error) return this.reply(msg, { error })
+    const options = {
+      size: 25,
+      from: 0,
+      filter_by_user: true
+    }
 
-      const options = {
-        size: 25,
-        from: 0,
-        filter_by_user: true
-      }
-
-      api.post('/api/search', options, (error, content) => {
-        this.reply(msg, { content, error })
-      })
+    api.post('/api/search', options, (error, content) => {
+      this.reply(msg, { content, error })
     })
   }
 
   searchBookmarks(msg) {
-    auth(error => {
-      if (error) return this.reply(msg, { error })
+    const options = {
+      query: msg.content.query,
+      size: 25,
+      from: 0,
+      filter_by_user: true
+    }
 
-      const options = {
-        query: msg.content.query,
-        size: 25,
-        from: 0,
-        filter_by_user: true
-      }
+    if (/^\w+$/.test(options.query) && options.query.length < HOMEPAGE_FILTER_THRESHOLD) {
+      options.filter_by_homepage = true
+    }
 
-      if (/^\w+$/.test(options.query) && options.query.length < HOMEPAGE_FILTER_THRESHOLD) {
-        options.filter_by_homepage = true
-      }
-
-      api.post('/api/search', options, (error, content) => {
-        this.reply(msg, { content, error })
-      })
+    api.post('/api/search', options, (error, content) => {
+      this.reply(msg, { content, error })
     })
   }
 
   getWebsite(msg) {
-    auth(error => {
-      if (error) return this.reply(msg, { error })
+    let query = msg.content.query
+    if (msg.content.query.indexOf('.com') === -1) {
+      query += '.com'
+    }
 
-      let query = msg.content.query
-      if (msg.content.query.indexOf('.com') === -1) {
-        query += '.com'
-      }
+    const options = {
+      query: query,
+      size: 25,
+      from: 0,
+      filter_by_typo: true,
+      filter_by_user: false
+    }
 
-      const options = {
-        query: query,
-        size: 25,
-        from: 0,
-        filter_by_typo: true,
-        filter_by_user: false
-      }
-
-      api.post('/api/search', options, (error, content) => {
-        this.reply(msg, { content, error })
-      })
-    })
-  }
-
-  getPersonalTags(msg) {
-    auth(error => {
-      if (error) return this.reply(msg, { error })
-
-      api.get('/api/personal-tags', (error, content) => {
-        this.reply(msg, { content, error })
-      })
+    api.post('/api/search', options, (error, content) => {
+      this.reply(msg, { content, error })
     })
   }
 
@@ -146,13 +124,42 @@ export default class BackgroundTasks extends RemoteTasks {
   }
 
   isLoggedIn(msg) {
-    this.reply(msg, { isLoggedIn: !!localStorage['token'] })
+    this.reply(msg, {
+      isLoggedIn: auth.isLoggedIn()
+    })
   }
 
-  setToken(msg) {
-    localStorage['token'] = msg.content.token
-    localStorage['name'] = msg.content.name
-    db.setToken(msg.content.token)
+  getName(msg) {
+    const user = auth.read()
+    const profile = user ? user.profile : null
+
+    this.reply(msg, {
+      name: profile ? profile.name : user ? user.name : localStorage['name']
+    })
+  }
+
+  getUser(msg) {
+    const user = auth.read()
+    if (user) {
+      this.reply(msg, { user })
+    } else {
+      this.reply(msg, { error: new Error('Auth error') })
+    }
+  }
+
+  setUser(msg) {
+    let parsed
+
+    try {
+      parsed = JSON.parse(msg.content.user)
+    } catch (err) {
+      this.reply(msg, { error: new Error('Bad user') })
+    }
+
+    console.log('Kozmos extension received user auth info.')
+    auth.save(msg.content.user)
+
+    db.setAPIAccessToken(parsed.access_token.key, parsed.access_token.secret)
   }
 
   getSettingsValue(msg) {
@@ -171,10 +178,6 @@ export default class BackgroundTasks extends RemoteTasks {
     this.reply(msg, { version })
   }
 
-  getName(msg) {
-    this.reply(msg, { name: localStorage['name'] })
-  }
-
   listenForMessages() {
     chrome.runtime.onMessage.addListener(msg => this.onReceive(msg))
   }
@@ -184,7 +187,7 @@ export default class BackgroundTasks extends RemoteTasks {
       return chrome.runtime.sendMessage(msg)
     }
 
-    tabs.current((err, tab) => {
+    getCurrentTab((err, tab) => {
       if (err) throw err
       chrome.tabs.sendMessage(tab.id, msg)
     })

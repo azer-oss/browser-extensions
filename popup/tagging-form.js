@@ -1,7 +1,7 @@
 import { h, Component } from "preact"
 import Input from "./input"
 import Icon from "./icon"
-import api from "../lib/api"
+import * as api from "../lib/api"
 
 export default class TaggingForm extends Component {
   constructor(props) {
