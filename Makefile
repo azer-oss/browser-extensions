@@ -60,3 +60,20 @@ compile-popup-html:
 	@cp popup/header.html chrome-dist/popup.html
 	@cat popup/*.css | $(BIN)/postcss --no-map -u postcss-clean >> chrome-dist/popup.html
 	@cat popup/footer.html >> chrome-dist/popup.html
+
+watch-safari-popup: compile-safari-popup
+	@$(BIN)/chokidar "popup-safari/*.js" "popup/*.js" "lib/*.js" "popup/*.json" "popup/*.css" "popup/*.html" \
+		-c "make compile-safari-popup"
+
+compile-safari-popup: compile-safari-popup-js compile-safari-popup-html
+
+compile-safari-popup-js:
+	@echo "Compiling kosmos.safariextension/popup.js"
+	@$(BIN)/browserify --debug popup-safari/popup.js > kozmos.safariextension/popup.js
+
+compile-safari-popup-html:
+	@echo "Compiling kosmos.safariextension/popup.html"
+	@echo "" > kozmos.safariextension/popup.html
+	@cp popup/header.html kozmos.safariextension/popup.html
+	@cat popup/*.css | $(BIN)/postcss --no-map -u postcss-clean >> kozmos.safariextension/popup.html
+	@cat popup/footer.html >> kozmos.safariextension/popup.html

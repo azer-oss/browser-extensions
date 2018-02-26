@@ -9,16 +9,6 @@ export default class LikedDialog extends Component {
     this.reset(props)
   }
 
-  componentWillReceiveProps(props) {
-    if (this.props.like.url !== props.like.url) {
-      this.setState({
-        isLoading: true,
-        tags: []
-      })
-      this.load()
-    }
-  }
-
   reset(props) {
     this.setState({
       isOnline: navigator.onLine,
@@ -33,7 +23,7 @@ export default class LikedDialog extends Component {
         {this.props.isJustLiked ? <h2>Done.</h2> : null}
         { this.state.isOnline ? this.renderOnlineBody() : this.renderOfflineBody()}
         <div className="footer">
-          <Icon name="trash" title="Unlike This Page" onClick={this.props.unlike} />
+          <Icon name="trash" title="Unlike This Page" onClick={() => this.props.unlike()} />
         </div>
       </div>
     )
