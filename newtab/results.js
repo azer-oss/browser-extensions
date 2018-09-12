@@ -6,14 +6,15 @@ import RecentBookmarks from "./recent-bookmarks"
 import QuerySuggestions from "./query-suggestions"
 import BookmarkSearch from "./bookmark-search"
 import History from "./history"
-import BookmarkTags from "./bookmark-tags"
+import ListBookmarksByTag from "./bookmark-tags"
+import AutocompleteBookmarks from "./autocomplete-bookmarks"
+import AutocompleteTopSites from "./autocomplete-top-sites"
 
 import Sidebar from "./sidebar"
 import Tagbar from "./tagbar"
 import Messaging from "./messaging"
 import URLIcon from "./url-icon"
 import Icon from "./icon"
-import OpenWebsite from './open-website'
 
 const MAX_ITEMS = 5
 
@@ -21,11 +22,9 @@ export default class Results extends Component {
   constructor(props) {
     super(props)
     this.messages = new Messaging()
+    this._onKeyPress = debounce(this.onKeyPress.bind(this), 50)
 
     this.setCategories(props)
-
-    this._onKeyPress = debounce(this.onKeyPress.bind(this), 50)
-    this.update(props.query || "")
   }
 
   componentWillReceiveProps(props) {
@@ -36,13 +35,14 @@ export default class Results extends Component {
 
   setCategories(props) {
     const categories = [
-      new OpenWebsite(this, 1),
-      new QuerySuggestions(this, 2),
-      new TopSites(this, props.recentBookmarksFirst ? 4 : 3),
-      new RecentBookmarks(this, props.recentBookmarksFirst ? 3 : 4),
-      new BookmarkTags(this, 5),
-      new BookmarkSearch(this, 6),
-      new History(this, 7)
+      new QuerySuggestions(this, 1),
+      new AutocompleteTopSites(this, 2),
+      new AutocompleteBookmarks(this, 3),
+      new TopSites(this, props.recentBookmarksFirst ? 5 : 4),
+      new RecentBookmarks(this, props.recentBookmarksFirst ? 4 : 5),
+      new ListBookmarksByTag(this, 6),
+      //new BookmarkSearch(this, 7),
+      new History(this, 8)
     ]
 
     this.setState({
@@ -55,31 +55,39 @@ export default class Results extends Component {
   addRows(category, rows) {
     if (rows.length === 0) return
 
-    const urlMap = {}
-    let i = this.state.content.length
-    while (i--) {
-      urlMap[this.state.content[i].url] = true
-    }
-
     let tags = this.state.tags
-    i = rows.length;
+    let i = rows.length
     while (i--) {
       if (rows[i].tags) {
         tags = tags.concat(rows[i].tags)
       }
     }
 
-    tags = tags.filter(t => 'tag:' + t !== this.props.query)
+    tags = tags.filter(t => "tag:" + t !== this.props.query)
 
-    const content = this.trim(this.state.content.concat(rows.filter(r => !urlMap[r.url]).map((r, i) => {
-      r.category = category
-      r.index = this.state.content.length + i
-      return r
-    })))
+    const content = this.trim(
+      this.state.content.concat(
+        rows.map((r, i) => {
+          r.category = category
+          r.index = this.state.content.length + i
+          return r
+        })
+      )
+    )
 
     this.setState({
       content,
       tags
+    })
+  }
+
+  count(filterFn) {
+    return this.state.content.filter(filterFn).length
+  }
+
+  removeRows(filterFn) {
+    this.setState({
+      content: this.state.content.filter(filterFn)
     })
   }
 
@@ -93,6 +101,13 @@ export default class Results extends Component {
       if (a.index > b.index) return 1
 
       return 0
+    })
+
+    const dict = {}
+    const uniques = content.filter(row => {
+      if (dict[row.url]) return false
+      dict[row.url] = true
+      return true
     })
 
     return content.map((row, index) => {
@@ -112,7 +127,9 @@ export default class Results extends Component {
     if (this.state.content.length === 0) return []
 
     const content = this.content()
-    const selectedCategory = this.state.selected ? content[this.state.selected].category : content[0].category
+    const selectedCategory = this.state.selected
+      ? content[this.state.selected].category
+      : content[0].category
     const categories = []
     const categoriesMap = {}
 
@@ -125,7 +142,10 @@ export default class Results extends Component {
           title: category.title,
           name: category.name,
           sort: category.sort,
-          collapsed: content.length >= MAX_ITEMS && selectedCategory.name != category.name && !!category.title,
+          collapsed:
+            content.length >= MAX_ITEMS &&
+            selectedCategory.name != category.name &&
+            !!category.title,
           rows: []
         }
 
@@ -151,7 +171,10 @@ export default class Results extends Component {
 
       categoryCounts[r.category.name]++
 
-      return r.category.pinned || MAX_ITEMS - pinnedCount >= categoryCounts[r.category.name]
+      return (
+        r.category.pinned ||
+        MAX_ITEMS - pinnedCount >= categoryCounts[r.category.name]
+      )
     })
 
     return content
@@ -172,19 +195,22 @@ export default class Results extends Component {
     return ctr
   }
 
-  reset(query) {
-    this.setState({
-      selected: 0,
-      content: [],
-      tags: [],
-      errors: [],
-      query: query || ''
-    })
+  reset(query, callback) {
+    this.setState(
+      {
+        selected: 0,
+        content: [],
+        tags: [],
+        errors: [],
+        query: query || ""
+      },
+      callback
+    )
   }
 
   update(query) {
     query = (query || "").trim()
-    this.reset()
+    this.reset(query)
     this.state.categories.forEach(c => c.onNewQuery(query))
   }
 
@@ -202,7 +228,10 @@ export default class Results extends Component {
 
   selectPrevious() {
     this.setState({
-      selected: this.state.selected == 0 ? this.state.content.length - 1 : this.state.selected - 1
+      selected:
+        this.state.selected == 0
+          ? this.state.content.length - 1
+          : this.state.selected - 1
     })
   }
 
@@ -244,11 +273,11 @@ export default class Results extends Component {
   }
 
   componentWillMount() {
-    window.addEventListener('keyup', this._onKeyPress, false)
+    window.addEventListener("keyup", this._onKeyPress, false)
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keyup', this._onKeyPress, false)
+    window.removeEventListener("keyup", this._onKeyPress, false)
   }
 
   componentWillReceiveProps(props) {
@@ -259,25 +288,28 @@ export default class Results extends Component {
     if (props.recentBookmarksFirst !== this.props.recentBookmarksFirst) {
       this.setCategories(props)
     }
-
   }
 
   navigateTo(url) {
     if (!/^\w+:\/\//.test(url)) {
-      url = 'http://' + url
+      url = "http://" + url
     }
 
     document.location.href = url
   }
 
   onKeyPress(e) {
-    if (e.keyCode == 13) { // enter
+    if (e.keyCode == 13) {
+      // enter
       this.navigateTo(this.state.content[this.state.selected].url)
-    } else if (e.keyCode == 40) { // down arrow
+    } else if (e.keyCode == 40) {
+      // down arrow
       this.selectNext()
-    } else if (e.keyCode == 38) { // up arrow
+    } else if (e.keyCode == 38) {
+      // up arrow
       this.selectPrevious()
-    } else if (e.keyCode == 9) { // tab key
+    } else if (e.keyCode == 9) {
+      // tab key
       this.selectNextCategory()
       e.preventDefault()
       e.stopPropagation()
@@ -285,7 +317,7 @@ export default class Results extends Component {
       this.props.prevWallpaper()
       e.preventDefault()
       e.stopPropagation()
-    } else if(e.ctrlKey && e.keyCode == 39) {
+    } else if (e.ctrlKey && e.keyCode == 39) {
       this.props.nextWallpaper()
       e.preventDefault()
       e.stopPropagation()
@@ -299,29 +331,50 @@ export default class Results extends Component {
       <div className={`results ${this.state.tags.length ? "has-tags" : ""}`}>
         <div className="links">
           <div className="results-categories">
-            {this.contentByCategory().map(category => this.renderCategory(category))}
+            {this.contentByCategory().map(category =>
+              this.renderCategory(category)
+            )}
           </div>
-          <Sidebar onChange={() => this.update()} selected={this.content()[this.state.selected]} messages={this.messages} onUpdateTopSites={() => this.onUpdateTopSites()} updateFn={() => this.update(this.props.query || "")} />
-          <div className="clear"></div>
+          <Sidebar
+            onChange={() => this.update()}
+            selected={this.content()[this.state.selected]}
+            messages={this.messages}
+            onUpdateTopSites={() => this.onUpdateTopSites()}
+            updateFn={() => this.update(this.props.query || "")}
+          />
+          <div className="clear" />
         </div>
-        <Tagbar query={this.props.query} openTag={this.props.openTag} content={this.state.tags} />
+        <Tagbar
+          query={this.props.query}
+          openTag={this.props.openTag}
+          content={this.state.tags}
+        />
       </div>
     )
   }
 
   renderCategory(c) {
-    const overflow = c.collapsed && this.state.content[this.state.selected].category.sort < c.sort && this.counter < MAX_ITEMS ? c.rows.slice(0, MAX_ITEMS - this.counter) : []
+    const overflow =
+      c.collapsed &&
+      this.state.content[this.state.selected].category.sort < c.sort &&
+      this.counter < MAX_ITEMS
+        ? c.rows.slice(0, MAX_ITEMS - this.counter)
+        : []
     const collapsed = c.rows.slice(overflow.length, MAX_ITEMS)
 
     return (
       <div className={`category ${c.collapsed ? "collapsed" : ""}`}>
         {this.renderCategoryTitle(c)}
-        {overflow.length > 0 ? <div className='category-rows overflow'>
-          {overflow.map((row) => this.renderRow(row))}
-        </div> : null}
-         {collapsed.length > 0 ? <div className='category-rows'>
-            {collapsed.map((row) => this.renderRow(row))}
-         </div> : null}
+        {overflow.length > 0 ? (
+          <div className="category-rows overflow">
+            {overflow.map(row => this.renderRow(row))}
+          </div>
+        ) : null}
+        {collapsed.length > 0 ? (
+          <div className="category-rows">
+            {collapsed.map(row => this.renderRow(row))}
+          </div>
+        ) : null}
       </div>
     )
   }
@@ -330,7 +383,7 @@ export default class Results extends Component {
     if (!c.title) return
 
     let title = c.title
-    if (typeof title === 'function') {
+    if (typeof title === "function") {
       title = c.title(this.props.query)
     }
 
@@ -348,7 +401,11 @@ export default class Results extends Component {
     this.counter++
 
     return (
-      <URLIcon content={row} onSelect={r => this.select(r.index)} selected={this.state.selected == row.index} />
+      <URLIcon
+        content={row}
+        onSelect={r => this.select(r.index)}
+        selected={this.state.selected == row.index}
+      />
     )
   }
 }

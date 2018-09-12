@@ -1,5 +1,9 @@
+.tagging-form {
+  margin: 15px 0;
+}
+
 .tagging-form .tags {
-  margin: 15px;
+  margin: 0 15px;
 }
 
 .tagging-form .tag {

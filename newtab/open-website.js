@@ -3,9 +3,9 @@ import Rows from "./rows"
 export default class OpenWebsite extends Rows {
   constructor(results, sort) {
     super(results, sort)
-    this.name = 'open-website'
+    this.name = "open-website"
     this.pinned = true
-    this.title = ''
+    this.title = ""
   }
 
   shouldBeOpen(query) {
@@ -19,14 +19,14 @@ export default class OpenWebsite extends Rows {
   update(query) {
     const oquery = query || this.results.props.query
 
-    this.results.messages.send({ task: 'get-website', query }, resp => {
+    this.results.messages.send({ task: "get-website", query }, resp => {
       if (oquery !== this.results.props.query.trim()) {
         return
       }
 
       if (resp.error) return this.fail(resp.error)
 
-      this.add(resp.content.results.likes.slice(0, 1))
+      this.add(resp.content.slice(0, 1))
     })
   }
 }

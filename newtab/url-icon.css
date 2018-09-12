@@ -63,7 +63,7 @@
 }
 
 .urlicon.selected {
-  background: #28cab7;
+  background: #00b473;
 }
 
 .urlicon:hover .title, .urlicon.selected .title {

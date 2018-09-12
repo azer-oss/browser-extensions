@@ -22,7 +22,7 @@
     "debounce-fn": "azer/debounce-fn",
     "img": "npm-dom/img",
     "likedb": "kozmos/likedb",
-    "preact": "^8.1.0",
+    "preact": "^8.3.1",
     "pubsub": "github:azer/pubsub",
     "random-color": "github:azer/random-color",
     "relative-date": "^1.1.3",

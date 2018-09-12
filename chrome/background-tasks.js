@@ -3,12 +3,16 @@ import RemoteTasks from "../lib/remote-tasks"
 import urls from "urls"
 import settings from "./settings"
 import * as api from "../lib/api"
-import * as auth from '../lib/auth'
+import * as auth from "../lib/auth"
 import { current as getCurrentTab } from "./tabs"
-import { db,
-         setAPIAccessToken as setDBAPIAccessToken,
-         onError, onPostUpdates, onReceiveUpdates } from "../lib/db"
-import { version }  from "../chrome-dist/manifest.json"
+import {
+  db,
+  setAPIAccessToken as setDBAPIAccessToken,
+  onError,
+  onPostUpdates,
+  onReceiveUpdates
+} from "../lib/db"
+import { version } from "../chrome-dist/manifest.json"
 
 const HOMEPAGE_FILTER_THRESHOLD = 5
 
@@ -16,92 +20,75 @@ export default class BackgroundTasks extends RemoteTasks {
   constructor() {
     super()
 
-    this.name = 'kozmos:background'
+    this.name = "kozmos:background"
     this.map({
-      'get-local-bookmarks': this.getLocalBookmarks,
-      'get-recent-bookmarks': auth.requiresAuth(this.getRecentBookmarks),
-      'search-bookmarks': auth.requiresAuth(this.searchBookmarks),
-      'get-website': auth.requiresAuth(this.getWebsite),
-      'get-tags': auth.requiresAuth(this.getTags),
-      'add-tags': auth.requiresAuth(this.addTags),
-      'delete-tag': auth.requiresAuth(this.deleteTag),
-      'is-logged-in': this.isLoggedIn,
-      'set-user': this.setUser,
-      'get-user': auth.requiresAuth(this.getUser),
-      'get-name': auth.requiresAuth(this.getName),
-      'like': this.like,
-      'unlike': this.unlike,
-      'get-like': this.getLike,
-      'get-version': this.getVersion,
-      'get-settings-value': this.getSettingsValue,
-      'set-settings-value': this.setSettingsValue,
-      'list-settings': this.getListOfSettings
+      "get-local-bookmarks": this.getLocalBookmarks,
+      "get-recent-bookmarks": this.promise(this.getRecentBookmarks),
+      "get-bookmarks-by-tag": this.promise(this.getBookmarksByTag),
+      "search-bookmarks": auth.requiresAuth(this.searchBookmarks),
+      autocomplete: this.promise(this.autocomplete),
+      "get-tags-of-bookmark": this.promise(this.getTagsOfBookmark),
+      "add-tags": this.promise(this.addTags),
+      "delete-tag": this.promise(this.deleteTag),
+      "is-logged-in": this.isLoggedIn,
+      "set-user": this.setUser,
+      "get-user": auth.requiresAuth(this.getUser),
+      "get-name": auth.requiresAuth(this.getName),
+      like: this.promise(this.addBookmark),
+      unlike: this.promise(this.removeBookmark),
+      "update-title": this.promise(this.updateTitle),
+      "get-like": this.promise(this.getBookmark),
+      "get-version": this.getVersion,
+      "get-settings-value": this.getSettingsValue,
+      "set-settings-value": this.setSettingsValue,
+      "list-settings": this.getListOfSettings
     })
 
     onError((err, action) => {
-      console.log('Database error during %s: %s', action, err)
+      console.log("Database error during %s: %s", action, err)
     })
 
-    onPostUpdates(() => this.lastPostedUpdatesAt = Date.now())
-    onReceiveUpdates(() => this.lastReceivedUpdatesAt = Date.now())
+    onPostUpdates(() => (this.lastPostedUpdatesAt = Date.now()))
+    onReceiveUpdates(() => (this.lastReceivedUpdatesAt = Date.now()))
   }
 
-  getLike(msg) {
-    if (!msg.content.url) return this.reply(msg, { like: null })
-
-    db.likes.get(urls.clean(msg.content.url), (err, row) => {
-      if (row) return this.reply(msg, { like: row })
-
-      db.likes.get(msg.content.url, (err, row) => {
-        return this.reply(msg, { like: row })
-      })
-    })
+  async getBookmark(msg) {
+    const like = await db.get(msg.content.url)
+    return { like }
   }
 
-  like(msg) {
-    db.likes.like(msg.content.url, msg.content.title, (err) => {
-      if (err) return this.reply(msg, { error: err })
-
-      db.likes.get(urls.clean(msg.content.url), (err, row) => {
-        if (row) return this.reply(msg, { like: row })
-      })
-    })
+  async addBookmark(msg) {
+    await db.add(msg.content)
+    const like = await db.get(msg.content.url)
+    return { like }
   }
 
-  unlike(msg) {
-    db.likes.unlike(urls.clean(msg.content.url), err => {
-      return this.reply(msg, { error: err })
-    })
+  async removeBookmark(msg) {
+    await db.delete(msg.content.url)
   }
 
-  getRecentBookmarks(msg) {
-    const options = {
-      size: 25,
-      from: 0,
-      filter_by_user: true
-    }
+  async getRecentBookmarks(msg) {
+    const content = await db.recent(25)
+    return { content }
+  }
 
-    api.post('/api/search', options, (error, content) => {
-      this.reply(msg, { content, error })
+  async getBookmarksByTag(msg) {
+    const content = await db.listByTag(msg.content.tag, { limit: 25 })
+    return { content }
+  }
+
+  async addTags(msg) {
+    msg.content.tags.forEach(async tag => {
+      await db.tag(msg.content.url, tag)
     })
   }
 
-  getTags(msg) {
-    api.post("/api/like-tags", { "url": msg.content.url }, (error, resp) => {
-      this.reply(msg, { tags: resp.tags, error })
-    })
+  async deleteTag(msg) {
+    await db.untag(msg.content.url, msg.content.tag)
   }
 
-  addTags(msg) {
-    api.put('/api/like-tags', { tags: msg.content.tags, url: msg.content.url }, error => {
-      this.reply(msg, { error })
-    })
-  }
-
-  deleteTag(msg) {
-    api.del('/api/like-tags', { tag: msg.content.tag, url: msg.content.url }, error => {
-      this.reply(msg, { error })
-    })
+  async updateTitle(msg) {
+    await db.updateTitle(msg.content.url, msg.content.title)
   }
 
   searchBookmarks(msg) {
@@ -112,32 +99,32 @@ export default class BackgroundTasks extends RemoteTasks {
       filter_by_user: true
     }
 
-    if (/^\w+$/.test(options.query) && options.query.length < HOMEPAGE_FILTER_THRESHOLD) {
-      options.filter_by_homepage = true
-    }
+    api.post("/api/search", options, (error, resp) => {
+      if (error) return this.reply(msg, { error })
 
-    api.post('/api/search', options, (error, content) => {
-      this.reply(msg, { content, error })
+      this.reply(msg, {
+        content: resp.results.likes,
+        total: resp.results.total_rows
+      })
     })
   }
 
-  getWebsite(msg) {
-    let query = msg.content.query
-    if (msg.content.query.indexOf('.com') === -1) {
-      query += '.com'
-    }
+  async autocomplete(msg) {
+    const query = msg.content.query
+    const byUrl = await db.searchByUrl(query)
+    const byTitle = await db.searchByTitle(query)
+    const byTags = await db.searchByTags(query)
+    const urls = {}
+    const uniques = byUrl
+      .concat(byTitle)
+      .concat(byTags)
+      .filter(row => {
+        if (urls[row.url]) return false
+        urls[row.url] = true
+        return true
+      })
 
-    const options = {
-      query: query,
-      size: 25,
-      from: 0,
-      filter_by_typo: true,
-      filter_by_user: false
-    }
-
-    api.post('/api/search', options, (error, content) => {
-      this.reply(msg, { content, error })
-    })
+    return { content: uniques }
   }
 
   getLocalBookmarks(msg) {
@@ -157,7 +144,7 @@ export default class BackgroundTasks extends RemoteTasks {
     const profile = user ? user.profile : null
 
     this.reply(msg, {
-      name: profile ? profile.name : user ? user.name : localStorage['name']
+      name: profile ? profile.name : user ? user.name : localStorage["name"]
     })
   }
 
@@ -166,7 +153,7 @@ export default class BackgroundTasks extends RemoteTasks {
     if (user) {
       this.reply(msg, { user })
     } else {
-      this.reply(msg, { error: new Error('Auth error') })
+      this.reply(msg, { error: new Error("Auth error") })
     }
   }
 
@@ -176,10 +163,10 @@ export default class BackgroundTasks extends RemoteTasks {
     try {
       parsed = JSON.parse(msg.content.user)
     } catch (err) {
-      this.reply(msg, { error: new Error('Bad user') })
+      this.reply(msg, { error: new Error("Bad user") })
     }
 
-    console.log('Kozmos extension received user auth info.')
+    console.log("Kozmos extension received user auth info.")
     auth.save(msg.content.user)
 
     setDBAPIAccessToken(parsed.access_token.key, parsed.access_token.secret)
@@ -206,7 +193,7 @@ export default class BackgroundTasks extends RemoteTasks {
   }
 
   sendMessage(msg) {
-    if (msg.to === 'kozmos:popup') {
+    if (msg.to === "kozmos:popup") {
       return chrome.runtime.sendMessage(msg)
     }
 
@@ -214,5 +201,17 @@ export default class BackgroundTasks extends RemoteTasks {
       if (err) throw err
       chrome.tabs.sendMessage(tab.id, msg)
     })
+  }
+
+  promise(fn) {
+    return async msg => {
+      try {
+        const result = await fn.call(this, msg)
+        this.reply(msg, result || {})
+      } catch (error) {
+        console.error("Background task failed", error)
+        this.reply(msg, { error })
+      }
+    }
   }
 }

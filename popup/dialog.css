@@ -1,6 +1,5 @@
 .dialog {
   margin-top: 15px;
-  padding-bottom: 20px;
 }
 
 .dialog h2 {
@@ -14,19 +13,23 @@
   text-align: center;
   font: 14px "Open Sans", sans-serif;
   color: #666;
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .dialog .footer {
   border-top: 1px solid #ddd;
-  margin: 30px 20px 10px 20px;
-  padding-top: 15px;
+  margin: 20px 20px 10px 20px;
+  padding-top: 10px;
+  display: grid;
+  grid-template-columns: auto 20px;
+  justify-items: stretch;
+  align-items: stretch;
 }
 
 .dialog .footer .icon {
   height: 20px;
   float: right;
-  color: #666;
+  color: #777;
   cursor: pointer;
 }
 
@@ -50,4 +53,30 @@
 
 .dialog.like .input .icon {
   top: 9px;
+}
+
+.dialog .title-textbox {
+  display: block;
+  width: calc(100% - 40px);
+  font: 14px "Open Sans", sans-serif;
+  border: 0;
+  background: transparent;
+  outline: none;
+  margin: 10px 20px;
+  box-sizing: border-box;
+  color: #333;
+  border-bottom: 1px dotted transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dialog .title-textbox:focus {
+  border-color: #ccc;
+  color: #111;
+}
+
+.dialog .liked-ago {
+  color: #666;
+  font: 14px "Open Sans", sans-serif;
 }

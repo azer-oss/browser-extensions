@@ -3,13 +3,13 @@ import { clean as cleanURL } from "urls"
 import relativeDate from "relative-date"
 import Icon from "./icon"
 import URLImage from "./url-image"
-import { hide as hideTopSite } from './top-sites'
-import { findHostname } from './url-image'
+import { hide as hideTopSite } from "./top-sites"
+import { findHostname } from "./url-image"
 
 export default class Sidebar extends Component {
   componentWillReceiveProps(props) {
     if (!props.selected) return
-    props.messages.send({ task: 'get-like', url: props.selected.url }, resp => {
+    props.messages.send({ task: "get-like", url: props.selected.url }, resp => {
       this.setState({
         like: resp.content.like
       })
@@ -27,21 +27,27 @@ export default class Sidebar extends Component {
   }
 
   like() {
-    this.props.messages.send({ task: 'like', url: this.props.selected.url }, resp => {
-      this.setState({
-        like: resp.content.like
-      })
-    })
+    this.props.messages.send(
+      { task: "like", url: this.props.selected.url },
+      resp => {
+        this.setState({
+          like: resp.content.like
+        })
+      }
+    )
 
     setTimeout(this.props.onChange, 1000)
   }
 
   unlike() {
-    this.props.messages.send({ task: 'unlike', url: this.props.selected.url }, resp => {
-      this.setState({
-        like: null
-      })
-    })
+    this.props.messages.send(
+      { task: "unlike", url: this.props.selected.url },
+      resp => {
+        this.setState({
+          like: null
+        })
+      }
+    )
 
     setTimeout(this.props.onChange, 1000)
   }
@@ -68,17 +74,25 @@ export default class Sidebar extends Component {
       <div className="buttons">
         {this.renderLikeButton()}
         {this.renderCommentButton()}
-        {this.props.selected.type === 'top' ? this.renderDeleteTopSiteButton() : null}
+        {this.props.selected.type === "top"
+          ? this.renderDeleteTopSiteButton()
+          : null}
       </div>
     )
   }
 
   renderLikeButton() {
-    const ago = this.state.like ? relativeDate(this.state.like.likedAt) : ""
-    const title = this.state.like ? "Delete It From Your Likes" : "Add It To Your Likes"
+    const ago = this.state.like ? relativeDate(this.state.like.createdAt) : ""
+    const title = this.state.like
+      ? "Delete this website from my bookmarks"
+      : "Bookmark this website"
 
     return (
-      <div title={title} className={`button like-button ${this.state.like? "liked" : ""}`} onClick={() => this.toggleLike()}>
+      <div
+        title={title}
+        className={`button like-button ${this.state.like ? "liked" : ""}`}
+        onClick={() => this.toggleLike()}
+      >
         <Icon name="heart" />
         {this.state.like ? `Liked ${ago}` : "Like It"}
       </div>
@@ -89,12 +103,16 @@ export default class Sidebar extends Component {
     if (!this.state.like) return
 
     const hostname = findHostname(this.state.like.url)
-    const isHomepage = cleanURL(this.state.like.url).indexOf('/') === -1
+    const isHomepage = cleanURL(this.state.like.url).indexOf("/") === -1
 
     if (!isHomepage) return
 
     return (
-      <a title={`Comments about ${hostname}`} className={`button comment-button`} href={`https://getkozmos.com/site/${hostname}`}>
+      <a
+        title={`Comments about ${hostname}`}
+        className={`button comment-button`}
+        href={`https://getkozmos.com/site/${hostname}`}
+      >
         <Icon name="message" />
         Comments
       </a>
@@ -103,11 +121,14 @@ export default class Sidebar extends Component {
 
   renderDeleteTopSiteButton() {
     return (
-      <div title="Delete It From Frequently Visited" className="button delete-button" onClick={() => this.deleteTopSite()}>
+      <div
+        title="Delete It From Frequently Visited"
+        className="button delete-button"
+        onClick={() => this.deleteTopSite()}
+      >
         <Icon name="trash" />
         Delete It
       </div>
     )
   }
-
 }

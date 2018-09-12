@@ -1,11 +1,11 @@
 import Rows from "./rows"
-import { findHostname } from './url-image'
+import { findHostname } from "./url-image"
 
 export default class History extends Rows {
   constructor(results, sort) {
     super(results, sort)
-    this.name = 'history'
-    this.title = 'Previously Visited'
+    this.name = "history"
+    this.title = "History"
   }
 
   shouldBeOpen(query) {
@@ -19,10 +19,12 @@ export default class History extends Rows {
   }
 }
 
-function filterOutSearch (row) {
-  return findHostname(row.url).split('.')[0] !== 'google'
-    && !/search\/?\?q\=\w*/.test(row.url)
-    && !/facebook\.com\/search/.test(row.url)
-    && !/twitter\.com\/search/.test(row.url)
-    && findHostname(row.url) !== 't.co'
+function filterOutSearch(row) {
+  return (
+    findHostname(row.url).split(".")[0] !== "google" &&
+    !/search\/?\?q\=\w*/.test(row.url) &&
+    !/facebook\.com\/search/.test(row.url) &&
+    !/twitter\.com\/search/.test(row.url) &&
+    findHostname(row.url) !== "t.co"
+  )
 }
