@@ -80,3 +80,7 @@
   color: #666;
   font: 14px "Open Sans", sans-serif;
 }
+
+.dialog.search .buttons {
+  margin: 10px;
+}

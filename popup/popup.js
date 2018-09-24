@@ -4,6 +4,7 @@ import Messaging from "./messaging"
 import Icon from "./icon"
 import Dialog from "./dialog"
 import Settings from "./settings"
+import config from "../config.json"
 
 class Popup extends Component {
   constructor(props) {
@@ -30,6 +31,12 @@ class Popup extends Component {
           like: resp.content.like,
           isLiked: !!resp.content.like
         })
+
+        if (resp.content.like && resp.content.like.title !== tab.title) {
+          this.setState({
+            title: resp.content.like.title
+          })
+        }
 
         this.messages.send(
           { task: "get-settings-value", key: "oneClickLike" },
@@ -90,7 +97,7 @@ class Popup extends Component {
 
   like() {
     if (!this.state.isLoggedIn) {
-      chrome.tabs.create({ url: "https://kozmos.cool/login" })
+      chrome.tabs.create({ url: config.host + "/login" })
     }
 
     this.messages.send(
@@ -139,7 +146,7 @@ class Popup extends Component {
     return (
       <div className="container">
         <h1>
-          <a title="Open Kozmos" target="_blank" href="https://kozmos.cool">
+          <a title="Open Kozmos" target="_blank" href={config.host}>
             kozmos
           </a>
           <Icon

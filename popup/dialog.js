@@ -52,7 +52,7 @@ export default class Dialog extends Component {
 
   renderLike() {
     return (
-      <div className="dialog like">
+      <div className="dialog like search">
         <Input
           onPressEnter={value => this.search(value)}
           icon="search"

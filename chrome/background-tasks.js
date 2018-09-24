@@ -41,6 +41,7 @@ export default class BackgroundTasks extends RemoteTasks {
       "get-version": this.getVersion,
       "get-settings-value": this.getSettingsValue,
       "set-settings-value": this.setSettingsValue,
+      "suggest-tags": this.promise(this.suggestTags),
       "list-settings": this.getListOfSettings
     })
 
@@ -125,6 +126,53 @@ export default class BackgroundTasks extends RemoteTasks {
       })
 
     return { content: uniques }
+  }
+
+  async suggestTags(msg) {
+    const query = msg.content.query
+    const rows = await db.searchByTags(query)
+    const found = {}
+
+    const taggedWith = await db.listByTag(query, {})
+    if (taggedWith.length > 0) found[query] = true
+
+    rows.forEach(row => {
+      row.tags.forEach(t => {
+        if (found[t]) return
+        if (t.indexOf(query) === -1) return
+        found[t] = true
+      })
+    })
+
+    const suggestions = Object.keys(found).sort((a, b) => {
+      if (a === query) {
+        return -1
+      }
+
+      if (b === query) {
+        return 1
+      }
+
+      if (a.indexOf(query) === 0) {
+        return -1
+      }
+
+      if (b.indexOf(query) === 0) {
+        return 1
+      }
+
+      if (a.length < b.length) {
+        return -1
+      }
+
+      if (b.length < a.length) {
+        return 1
+      }
+
+      return 0
+    })
+
+    return { suggestions }
   }
 
   getLocalBookmarks(msg) {

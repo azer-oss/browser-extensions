@@ -1,4 +1,4 @@
-.input {
+.search .input {
   margin: 10px 20px;
   border: 1px solid #ddd;
   border-radius: 3px;
@@ -7,7 +7,7 @@
 
 }
 
-.input .icon {
+.search .input .icon {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -15,7 +15,7 @@
   color: #aaa;
 }
 
-.input input {
+.search .input input {
   width: calc(100% - 45px);
   border: 0;
   padding: 10px 5px 10px 40px;
@@ -25,6 +25,6 @@
   color: #333;
 }
 
-.input.light {
+.search .input.light {
   border: 0;
 }

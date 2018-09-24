@@ -1,5 +1,6 @@
-import { h, Component } from 'preact'
+import { h, Component } from "preact"
 import Icon from "./icon"
+import config from "../config"
 
 export default class Input extends Component {
   constructor(props) {
@@ -15,28 +16,78 @@ export default class Input extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextState.value !== this.state.value
+    const nextSuggestions =
+      nextProps.suggestions && nextProps.suggestions.join(",")
+    const currentSuggestions =
+      this.props.suggestions && this.props.suggestions.join(",")
+
+    return (
+      nextState.value !== this.state.value ||
+      nextState.placeholder !== this.state.placeholder ||
+      nextState.selectedSuggestion !== this.state.selectedSuggestion ||
+      nextSuggestions != currentSuggestions
+    )
   }
 
-  focus () {
+  focus() {
     this.el.focus()
   }
 
-  onFocus(e) {
+  hasSuggestions() {
+    return !!this.props.suggestions && !!this.props.suggestions.length
+  }
+
+  selectedIndex(index) {
+    return Math.abs(
+      (index !== undefined ? index : this.state.selectedSuggestion) %
+        this.props.suggestions.length
+    )
+  }
+
+  selectSuggestion(selectedSuggestion, triggerEnterEvent) {
+    const value = this.props.suggestions[this.selectedIndex(selectedSuggestion)]
+
     this.setState({
-      placeholder: ""
+      selectedSuggestion,
+      value
+    })
+
+    if (triggerEnterEvent) {
+      this.onKeyUp({ keyCode: 13, target: { value } })
+    }
+  }
+
+  selectNextSuggestion() {
+    if (typeof this.state.selectedSuggestion !== "number") {
+      return this.selectSuggestion(0)
+    }
+
+    this.selectSuggestion(this.state.selectedSuggestion - 1)
+  }
+
+  selectPrevSuggestion() {
+    if (typeof this.state.selectedSuggestion !== "number") {
+      return this.selectSuggestion(0)
+    }
+
+    this.selectSuggestion(this.state.selectedSuggestion + 1)
+  }
+
+  reset() {
+    this.setState({
+      value: "",
+      selectedSuggestion: 0
     })
   }
 
-  onBlur(e) {
-    this.setState({
-      placeholder: this.props.placeholder
-    })
-  }
+  onFocus(e) {}
 
-  onChange(e) {
+  onBlur(e) {}
+
+  onInput(e) {
     this.setState({
-      value: e.target.value
+      value: e.target.value,
+      selectedSuggestion: undefined
     })
 
     if (this.props.onChange) {
@@ -45,11 +96,10 @@ export default class Input extends Component {
   }
 
   onKeyUp(e) {
-    const value = e.target.value;
-    this.onChange(e)
+    const value = e.target.value
 
     if (e.keyCode === 27) {
-      this.setState({ value: "" })
+      this.reset()
 
       if (this.props.onPressEsc) {
         return this.props.onPressEsc(value)
@@ -57,32 +107,64 @@ export default class Input extends Component {
     }
 
     if (e.keyCode === 13 && this.props.onPressEnter) {
-      this.setState({ value: "" })
+      this.reset()
       return this.props.onPressEnter(value)
     }
 
     if (e.keyCode === 188 && this.props.onTypeComma) {
-      this.setState({ value: "" })
+      this.reset()
       return this.props.onPressEnter(value)
+    }
+
+    if (e.keyCode === 38 && this.hasSuggestions()) {
+      this.selectPrevSuggestion()
+      return e.preventDefault()
+    }
+
+    if (e.keyCode === 40 && this.hasSuggestions()) {
+      this.selectNextSuggestion()
+      return e.preventDefault()
     }
   }
 
   render() {
     return (
       <div className="input">
-        {this.props.icon ? <Icon name={this.props.icon} stroke={this.props.iconStroke} /> : null}
-        <input type="text/css"
-               placeholder={this.state.placeholder}
-               onChange={(e) => this.onChange(e)}
-               onKeyUp={(e) => this.onKeyUp(e)}
-               onFocus={(e) => this.onFocus(e)}
-               onBlur={(e) => this.onBlur(e)}
-               value={this.state.value}
-               ref={input => this.el = input}
-               type={this.props.type || "text"}
-               autocomplete={this.props.autocomplete === false ? "off" : "on"}
+        {this.props.icon ? (
+          <Icon name={this.props.icon} stroke={this.props.iconStroke} />
+        ) : null}
+        <input
+          type="text/css"
+          placeholder={this.state.placeholder}
+          onInput={e => this.onInput(e)}
+          onKeyUp={e => this.onKeyUp(e)}
+          onFocus={e => this.onFocus(e)}
+          onBlur={e => this.onBlur(e)}
+          value={this.state.value || undefined}
+          ref={input => (this.el = input)}
+          type={this.props.type || "text"}
+          autocomplete={this.props.autocomplete === false ? "off" : "on"}
         />
+        {this.renderSuggestions()}
       </div>
+    )
+  }
+
+  renderSuggestions() {
+    if (!this.hasSuggestions()) return
+
+    return (
+      <ul className="suggestions">
+        {this.props.suggestions.map((t, ind) => (
+          <li
+            onClick={() => this.selectSuggestion(ind, true)}
+            className={this.selectedIndex() === ind ? "selected" : ""}
+          >
+            {t}
+            <a href={`${config.host}/tag/${t}`} />
+          </li>
+        ))}
+      </ul>
     )
   }
 }

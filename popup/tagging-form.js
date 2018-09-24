@@ -37,6 +37,8 @@ export default class TaggingForm extends Component {
     const copy = this.state.tags.slice()
     copy.push.apply(copy, tags)
     this.setState({ tags: copy })
+
+    this.setState({ suggestions: null })
   }
 
   deleteTag(tag) {
@@ -64,17 +66,44 @@ export default class TaggingForm extends Component {
     }
   }
 
+  hasSuggestions() {
+    return this.state.suggestions && this.state.suggestions.length
+  }
+
+  suggest(input) {
+    input = input.trim()
+    if (!input) return this.setState({ suggestions: null })
+
+    this.messages.send({ task: "suggest-tags", query: input }, resp => {
+      if (resp.error) return this.props.onError(resp.error)
+
+      this.setState({
+        suggestions: resp.content.suggestions
+          .filter(t => this.state.tags.indexOf(t) === -1)
+          .slice(0, 3)
+      })
+    })
+  }
+
   render() {
+    return <div className="tagging-form">{this.renderInput()}</div>
+  }
+
+  renderInput() {
     return (
-      <div className="tagging-form">
+      <div
+        className={`tag-editor ${
+          this.hasSuggestions() ? "has-suggestions" : ""
+        }`}
+      >
+        {this.renderTags()}
         <Input
           onPressEnter={value => this.addTag(value)}
-          onTypeComma={value => this.addTag(value)}
-          icon="tag"
+          onChange={value => this.suggest(value)}
           placeholder="Type a tag & hit enter"
+          suggestions={this.state.suggestions}
           autofocus
         />
-        {this.renderTags()}
       </div>
     )
   }
@@ -93,14 +122,13 @@ export default class TaggingForm extends Component {
     }
 
     return (
-      <div className="tag">
-        <Icon
-          name="close"
-          stroke="5"
-          title={`Delete "${tag.name}"`}
-          onclick={() => this.deleteTag(tag.name)}
-        />
+      <div
+        className="tag"
+        title={`Untag ${tag.name}`}
+        onclick={() => this.deleteTag(tag.name)}
+      >
         {tag.name}
+        <div className="remove" />
       </div>
     )
   }
