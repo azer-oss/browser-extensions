@@ -29,7 +29,7 @@ export default class ListBookmarksByTag extends Rows {
               title: `More tagged with "${tag}"`,
               url: `${config.host}/tag/${tag}`
             })
-          : content
+          : resp.content
 
       this.add(content)
     })

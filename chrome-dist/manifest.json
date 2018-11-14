@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Kozmos - Bookmarking Simplified for Everyone",
   "description": "Free, fast, unlimited and beautiful bookmarking service for everyone.",
-  "version": "8.5",
+  "version": "8.6",
   "browser_action": {
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos",
@@ -18,10 +18,10 @@
         "http://*.getkozmos.com/*",
         "https://getkozmos.com/*",
         "https://*.getkozmos.com/*",
-        "http://test.kozmos.cool/*",
-        "http://*.test.kozmos.cool/*",
-        "https://test.kozmos.cool/*",
-        "https://*.test.kozmos.cool/*"
+        "http://test.getkozmos.com/*",
+        "http://*.test.getkozmos.com/*",
+        "https://test.getkozmos.com/*",
+        "https://*.test.getkozmos.com/*"
       ],
       "all_frames": true,
       "js": ["./content.js"]
