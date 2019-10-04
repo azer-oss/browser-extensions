@@ -18,6 +18,12 @@ class Popup extends Component {
       })
     })
 
+    this.messages.send({ task: "has-payment-method" }, resp => {
+      this.setState({
+        hasPaymentMethod: resp.content.hasPaymentMethod
+      })
+    })
+
     getCurrentTab((err, tab) => {
       if (err) return this.setState({ error: err })
 
@@ -97,7 +103,15 @@ class Popup extends Component {
 
   like() {
     if (!this.state.isLoggedIn) {
-      chrome.tabs.create({ url: config.host + "/login" })
+      chrome.tabs.create({
+        url: config.host + "/signup"
+      })
+      return
+    }
+
+    if (!this.state.hasPaymentMethod) {
+      chrome.tabs.create({ url: config.host + "/settings/payment" })
+      return
     }
 
     this.messages.send(

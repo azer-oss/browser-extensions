@@ -25,7 +25,11 @@ export default class TaggingForm extends Component {
   }
 
   addTag(tag) {
-    const tags = tag.split(/,\s*/)
+    const tags = tag.split(/\s*,\s*/).filter(s => s.trim().length)
+
+    if (tags.length === 0) {
+      return
+    }
 
     this.messages.send(
       { task: "add-tags", tags, url: this.props.like.url },

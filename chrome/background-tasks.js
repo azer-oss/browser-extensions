@@ -31,6 +31,7 @@ export default class BackgroundTasks extends RemoteTasks {
       "add-tags": this.promise(this.addTags),
       "delete-tag": this.promise(this.deleteTag),
       "is-logged-in": this.isLoggedIn,
+      "has-payment-method": this.hasPaymentMethod,
       "set-user": this.setUser,
       "get-user": auth.requiresAuth(this.getUser),
       "get-name": auth.requiresAuth(this.getName),
@@ -187,6 +188,12 @@ export default class BackgroundTasks extends RemoteTasks {
     })
   }
 
+  hasPaymentMethod(msg) {
+    this.reply(msg, {
+      hasPaymentMethod: auth.hasPaymentMethod()
+    })
+  }
+
   getName(msg) {
     const user = auth.read()
     const profile = user ? user.profile : null
@@ -214,7 +221,6 @@ export default class BackgroundTasks extends RemoteTasks {
       this.reply(msg, { error: new Error("Bad user") })
     }
 
-    console.log("Kozmos extension received user auth info.")
     auth.save(msg.content.user)
 
     setDBAPIAccessToken(parsed.access_token.key, parsed.access_token.secret)
