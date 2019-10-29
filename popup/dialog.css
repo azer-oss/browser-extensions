@@ -62,9 +62,10 @@
   border: 0;
   background: transparent;
   outline: none;
-  margin: 10px 20px;
+  margin: 5px 20px;
+  padding: 8px 10px;
   box-sizing: border-box;
-  color: #333;
+  color: #111;
   border-bottom: 1px dotted transparent;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -72,8 +73,8 @@
 }
 
 .dialog .title-textbox:focus {
-  border-color: #ccc;
-  color: #111;
+  box-shadow: rgba(67, 90, 111, 0.14) 0px 0px 2px inset, rgb(87, 154, 217) 0px 0px 0px 1px inset, rgba(16, 112, 202, 0.14) 0px 0px 0px 3px;
+  color: #000;
 }
 
 .dialog .liked-ago {

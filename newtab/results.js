@@ -3,10 +3,13 @@ import debounce from "debounce-fn"
 
 import TopSites from "./top-sites"
 import RecentBookmarks from "./recent-bookmarks"
+import Collections from "./collections"
 import QuerySuggestions from "./query-suggestions"
 import BookmarkSearch from "./bookmark-search"
 import History from "./history"
 import ListBookmarksByTag from "./bookmark-tags"
+import ListBookmarksByCollection from "./collection-list"
+import ListSpeedDial from "./speed-dial"
 import AutocompleteBookmarks from "./autocomplete-bookmarks"
 import AutocompleteTopSites from "./autocomplete-top-sites"
 
@@ -23,6 +26,7 @@ export default class Results extends Component {
     super(props)
     this.messages = new Messaging()
     this._onKeyPress = debounce(this.onKeyPress.bind(this), 50)
+    this._select = debounce(this.select.bind(this), 100)
 
     this.setCategories(props)
   }
@@ -35,14 +39,17 @@ export default class Results extends Component {
 
   setCategories(props) {
     const categories = [
+      new ListSpeedDial(this, 0),
       new QuerySuggestions(this, 1),
       new AutocompleteTopSites(this, 2),
       new AutocompleteBookmarks(this, 3),
       new TopSites(this, props.recentBookmarksFirst ? 5 : 4),
       new RecentBookmarks(this, props.recentBookmarksFirst ? 4 : 5),
-      new ListBookmarksByTag(this, 6),
+      new Collections(this, 6),
+      new ListBookmarksByTag(this, 7),
       //new BookmarkSearch(this, 7),
-      new History(this, 8)
+      new History(this, 8),
+      new ListBookmarksByCollection(this, 9)
     ]
 
     this.setState({
@@ -67,10 +74,11 @@ export default class Results extends Component {
 
     const content = this.trim(
       this.state.content.concat(
-        rows.map((r, i) => {
-          r.category = category
-          r.index = this.state.content.length + i
-          return r
+        rows.map((row, i) => {
+          return {
+            row,
+            index: this.state.content.length + i
+          }
         })
       )
     )
@@ -94,8 +102,8 @@ export default class Results extends Component {
   content() {
     let content = this.state.content
     content.sort((a, b) => {
-      if (a.category.sort < b.category.sort) return -1
-      if (a.category.sort > b.category.sort) return 1
+      if (a.row.category.sort < b.row.category.sort) return -1
+      if (a.row.category.sort > b.row.category.sort) return 1
 
       if (a.index < b.index) return -1
       if (a.index > b.index) return 1
@@ -104,19 +112,15 @@ export default class Results extends Component {
     })
 
     const dict = {}
-    const uniques = content.filter(row => {
-      if (dict[row.url]) return false
-      dict[row.url] = true
+    const uniques = content.filter(c => {
+      if (dict[c.row.key()]) return false
+      dict[c.row.key()] = true
       return true
     })
 
-    return content.map((row, index) => {
+    return content.map((c, index) => {
       return {
-        url: row.url,
-        title: row.title,
-        images: row.images,
-        type: row.category.name,
-        category: row.category,
+        row: c.row,
         absIndex: index,
         index
       }
@@ -127,17 +131,19 @@ export default class Results extends Component {
     if (this.state.content.length === 0) return []
 
     const content = this.content()
-    const selectedCategory = this.state.selected
-      ? content[this.state.selected].category
-      : content[0].category
+
+    const selectedCategory =
+      this.state.selected && content[this.state.selected]
+        ? content[this.state.selected].row.category
+        : content[0].row.category
     const categories = []
     const categoriesMap = {}
 
     let tabIndex = 2
     let category = null
-    content.forEach((row, ind) => {
-      if (!category || category.name !== row.category.name) {
-        category = row.category
+    content.forEach((c, ind) => {
+      if (!category || category.name !== c.row.category.name) {
+        category = c.row.category
         categoriesMap[category.name] = {
           title: category.title,
           name: category.name,
@@ -151,10 +157,10 @@ export default class Results extends Component {
 
         categories.push(categoriesMap[category.name])
 
-        row.tabIndex = ++tabIndex
+        c.tabIndex = ++tabIndex
       }
 
-      categoriesMap[category.name].rows.push(row)
+      categoriesMap[category.name].rows.push(c)
     })
 
     return categories
@@ -164,16 +170,16 @@ export default class Results extends Component {
     const categoryCounts = {}
     const pinnedCount = this.pinnedRowCount()
 
-    content = content.filter(r => {
-      if (!categoryCounts[r.category.name]) {
-        categoryCounts[r.category.name] = 0
+    content = content.filter(c => {
+      if (!categoryCounts[c.row.category.name]) {
+        categoryCounts[c.row.category.name] = 0
       }
 
-      categoryCounts[r.category.name]++
+      categoryCounts[c.row.category.name]++
 
       return (
-        r.category.pinned ||
-        MAX_ITEMS - pinnedCount >= categoryCounts[r.category.name]
+        c.row.category.pinned ||
+        MAX_ITEMS - pinnedCount >= categoryCounts[c.row.category.name]
       )
     })
 
@@ -187,7 +193,7 @@ export default class Results extends Component {
     let ctr = 0
     let i = -1
     while (++i < len) {
-      if (content[i].category.pinned) {
+      if (content[i].row.category.pinned) {
         ctr++
       }
     }
@@ -236,18 +242,51 @@ export default class Results extends Component {
   }
 
   selectNextCategory() {
-    let currentCategory = this.state.content[this.state.selected].category
+    let currentCategory = this.state.content[this.state.selected].row.category
 
     const len = this.state.content.length
     let i = this.state.selected
     while (++i < len) {
-      if (this.state.content[i].category.sort !== currentCategory.sort) {
+      if (this.state.content[i].row.category.sort !== currentCategory.sort) {
         this.select(i)
         return
       }
     }
 
-    if (this.state.content[0].category.sort !== currentCategory.sort) {
+    if (this.state.content[0].row.category.sort !== currentCategory.sort) {
+      this.select(0)
+    }
+  }
+
+  selectPreviousCategory() {
+    let currentCategory = this.state.content[this.state.selected].row.category
+
+    const len = this.state.content.length
+    let i =
+      this.state.selected === 0
+        ? len - this.state.selected
+        : this.state.selected
+
+    let nextCategorySort = undefined
+    let nextCategoryIndex = undefined
+
+    while (i--) {
+      if (
+        nextCategorySort !== undefined &&
+        nextCategorySort !== this.state.content[i].row.category.sort
+      ) {
+        this.select(nextCategoryIndex)
+        return
+      }
+
+      if (this.state.content[i].row.category.sort !== currentCategory.sort) {
+        nextCategoryIndex = i
+        nextCategorySort = this.state.content[i].row.category.sort
+        continue
+      }
+    }
+
+    if (this.state.content[0].row.category.sort !== currentCategory.sort) {
       this.select(0)
     }
   }
@@ -290,29 +329,26 @@ export default class Results extends Component {
     }
   }
 
-  navigateTo(url) {
-    if (!/^\w+:\/\//.test(url)) {
-      url = "http://" + url
-    }
-
-    document.location.href = url
-  }
-
   onKeyPress(e) {
     if (e.keyCode == 13) {
       // enter
-      this.navigateTo(this.state.content[this.state.selected].url)
+      this.state.content[this.state.selected].row.onPressEnter()
+    } else if (e.keyCode == 9 || (e.keyCode === 40 && e.ctrlKey)) {
+      // tab key or ctrl+down
+      this.selectNextCategory()
+      e.preventDefault()
+      e.stopPropagation()
+    } else if (e.keyCode === 38 && e.ctrlKey) {
+      // ctrl+up
+      this.selectPreviousCategory()
+      e.preventDefault()
+      e.stopPropagation()
     } else if (e.keyCode == 40) {
       // down arrow
       this.selectNext()
     } else if (e.keyCode == 38) {
       // up arrow
       this.selectPrevious()
-    } else if (e.keyCode == 9) {
-      // tab key
-      this.selectNextCategory()
-      e.preventDefault()
-      e.stopPropagation()
     } else if (e.ctrlKey && e.keyCode == 37) {
       this.props.prevWallpaper()
       e.preventDefault()
@@ -337,7 +373,10 @@ export default class Results extends Component {
           </div>
           <Sidebar
             onChange={() => this.update()}
-            selected={this.content()[this.state.selected]}
+            selected={
+              this.content()[this.state.selected] &&
+              this.content()[this.state.selected].row
+            }
             messages={this.messages}
             onUpdateTopSites={() => this.onUpdateTopSites()}
             updateFn={() => this.update(this.props.query || "")}
@@ -356,7 +395,7 @@ export default class Results extends Component {
   renderCategory(c) {
     const overflow =
       c.collapsed &&
-      this.state.content[this.state.selected].category.sort < c.sort &&
+      this.state.content[this.state.selected].row.category.sort < c.sort &&
       this.counter < MAX_ITEMS
         ? c.rows.slice(0, MAX_ITEMS - this.counter)
         : []
@@ -367,12 +406,12 @@ export default class Results extends Component {
         {this.renderCategoryTitle(c)}
         {overflow.length > 0 ? (
           <div className="category-rows overflow">
-            {overflow.map(row => this.renderRow(row))}
+            {overflow.map(c => this.renderRow(c.row, c.index))}
           </div>
         ) : null}
         {collapsed.length > 0 ? (
           <div className="category-rows">
-            {collapsed.map(row => this.renderRow(row))}
+            {collapsed.map(c => this.renderRow(c.row, c.index))}
           </div>
         ) : null}
       </div>
@@ -397,14 +436,15 @@ export default class Results extends Component {
     )
   }
 
-  renderRow(row) {
+  renderRow(row, index) {
     this.counter++
 
     return (
       <URLIcon
         content={row}
-        onSelect={r => this.select(r.index)}
-        selected={this.state.selected == row.index}
+        index={index}
+        onSelect={index => this._select(index)}
+        selected={this.state.selected == index}
       />
     )
   }

@@ -14,7 +14,8 @@ export default class BookmarkSearch extends Rows {
     return (
       query &&
       query.length > 1 &&
-      (query.indexOf("tag:") !== 0 || query.length < 5)
+      (query.indexOf("tag:") !== 0 || query.length < 5) &&
+      query.indexOf("in:") !== 0
     )
   }
 

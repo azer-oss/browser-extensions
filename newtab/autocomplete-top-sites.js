@@ -1,3 +1,4 @@
+import Row from "./row"
 import Rows from "./rows"
 import debounce from "debounce-fn"
 import { clean } from "urls"
@@ -25,7 +26,7 @@ export default class AutocompleteTopSites extends Rows {
           clean(topSites[i].url).indexOf(query) === 0 ||
           topSites[i].title.toLowerCase().indexOf(query) > -1
         ) {
-          result.push(topSites[i])
+          result.push(new Row(this, topSites[i]))
         }
       }
 

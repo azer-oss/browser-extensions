@@ -1,0 +1,5 @@
+[
+  { key: 'tags', title: 'Tags' },
+  { key: 'collections', title: 'Collections' },
+  { key: 'speed-dial', title: 'Speed Dial' },
+]

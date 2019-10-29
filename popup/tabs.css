@@ -1,0 +1,25 @@
+.tabs {
+  background: #eaeaea;
+  border-radius: 7.5px;
+  display: grid;
+  grid-template-columns: 25% 40% 35%;
+  margin: 10px 18px;
+  padding: 3px;
+}
+
+.tabs .tab {
+  text-align: center;
+  padding: 7.5px 0;
+  color: #666;
+  cursor: pointer;
+}
+
+.tabs .tab.selected {
+  border-radius: 7.5px;
+  background: #fff;
+  color: #111;
+}
+
+.tabs .tab:last-child {
+  border-right: 0;
+}

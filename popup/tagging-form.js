@@ -96,7 +96,7 @@ export default class TaggingForm extends Component {
   renderInput() {
     return (
       <div
-        className={`tag-editor ${
+        className={`tag-editor textfield selectfield ${
           this.hasSuggestions() ? "has-suggestions" : ""
         }`}
       >

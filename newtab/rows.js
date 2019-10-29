@@ -1,5 +1,5 @@
-import URLIcon from "./url-icon"
 import config from "../config"
+import Row from "./row"
 
 const MORE_RESULTS_THRESHOLD = 4
 
@@ -10,12 +10,12 @@ export default class Rows {
   }
 
   add(rows) {
-    this.results.addRows(this, rows)
+    this.results.addRows(this, rows.map(r => new Row(this, r)))
   }
 
   addMoreButton(rows, { title, url }) {
     const alreadyAddedCount = this.results.count(
-      row => row.category.name === this.name && !row.isMoreButton
+      row => row.row.category.name === this.name && !row.row.isMoreButton
     )
     const limit = MORE_RESULTS_THRESHOLD - alreadyAddedCount
 
@@ -24,7 +24,7 @@ export default class Rows {
     }
 
     this.results.removeRows(
-      row => row.category.name !== this.name || !row.isMoreButton
+      row => row.row.category.name !== this.name || !row.row.isMoreButton
     )
 
     rows.push({

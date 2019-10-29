@@ -6,6 +6,8 @@ import Dialog from "./dialog"
 import Settings from "./settings"
 import config from "../config.json"
 
+const DEFAULT_VIEW = "tags"
+
 class Popup extends Component {
   constructor(props) {
     super(props)
@@ -15,6 +17,12 @@ class Popup extends Component {
     this.messages.send({ task: "is-logged-in" }, resp => {
       this.setState({
         isLoggedIn: resp.content.isLoggedIn
+      })
+    })
+
+    this.messages.send({ task: "get-selected-view" }, resp => {
+      this.setState({
+        selectedView: resp.content.selectedView || DEFAULT_VIEW
       })
     })
 
@@ -144,14 +152,19 @@ class Popup extends Component {
   }
 
   updateTitle(title) {
-    this.setState({ title })
+    this.setState({ title, isSaved: false })
 
     this.messages.send(
       { task: "update-title", url: this.state.url, title },
       resp => {
         if (resp.content.error) return this.onError(resp.content.error)
+        this.onSave()
       }
     )
+  }
+
+  onSave() {
+    this.setState({ isSaved: true, savedAt: Date.now() })
   }
 
   render() {
@@ -183,6 +196,11 @@ class Popup extends Component {
           onStopLoading={() => this.onStopLoading()}
           onSync={() => this.onSync()}
           onError={err => this.onError(err)}
+          isSaved={this.state.isSaved}
+          savedAt={this.state.savedAt}
+          onSave={() => this.onSave()}
+          selectedView={this.state.selectedView}
+          setView={v => this.setView(v)}
         />
 
         {this.renderStatus()}
@@ -244,6 +262,12 @@ class Popup extends Component {
           }`
         )
     )
+  }
+
+  setView(selectedView) {
+    this.setState({ selectedView })
+
+    this.messages.send({ task: "set-selected-view", selectedView }, resp => {})
   }
 }
 

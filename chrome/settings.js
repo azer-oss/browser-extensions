@@ -1,4 +1,4 @@
-import sections from './settings-sections'
+import sections from "./settings-sections"
 
 class Settings {
   defaults() {
@@ -37,7 +37,9 @@ class Settings {
   }
 
   read() {
-    const saved = localStorage['settings']
+    const saved = localStorage["settings"]
+    if (!saved) return this.defaults()
+
     try {
       return JSON.parse(saved)
     } catch (err) {
@@ -46,7 +48,7 @@ class Settings {
   }
 
   save(content) {
-    localStorage['settings'] = JSON.stringify(content)
+    localStorage["settings"] = JSON.stringify(content)
   }
 }
 

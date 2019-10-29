@@ -5,8 +5,9 @@ import config from "../config"
 export default class Input extends Component {
   constructor(props) {
     super(props)
+
     this.setState({
-      value: "",
+      value: props.value,
       placeholder: this.props.placeholder
     })
   }
@@ -95,19 +96,24 @@ export default class Input extends Component {
     }
   }
 
+  onKeyDown(e) {
+    if (this.props.onPressEsc && e.keyCode === 27) {
+      e.preventDefault()
+    }
+  }
+
   onKeyUp(e) {
     const value = e.target.value
 
     if (e.keyCode === 27) {
-      this.reset()
-
       if (this.props.onPressEsc) {
         return this.props.onPressEsc(value)
+      } else {
+        this.reset()
       }
     }
 
     if (e.keyCode === 13 && this.props.onPressEnter) {
-      this.reset()
       return this.props.onPressEnter(value)
     }
 
@@ -137,9 +143,11 @@ export default class Input extends Component {
           type="text/css"
           placeholder={this.state.placeholder}
           onInput={e => this.onInput(e)}
+          onKeyDown={e => this.onKeyDown(e)}
           onKeyUp={e => this.onKeyUp(e)}
           onFocus={e => this.onFocus(e)}
           onBlur={e => this.onBlur(e)}
+          onPressEsc={e => this.onPressEsc()}
           value={this.state.value || undefined}
           ref={input => (this.el = input)}
           type={this.props.type || "text"}
@@ -155,13 +163,13 @@ export default class Input extends Component {
 
     return (
       <ul className="suggestions">
-        {this.props.suggestions.map((t, ind) => (
+        {this.props.suggestions.slice(0, 3).map((s, ind) => (
           <li
             onClick={() => this.selectSuggestion(ind, true)}
             className={this.selectedIndex() === ind ? "selected" : ""}
           >
-            {t}
-            <a href={`${config.host}/tag/${t}`} />
+            {s}
+            <a href={`${config.host}/tag/${s}`} />
           </li>
         ))}
       </ul>

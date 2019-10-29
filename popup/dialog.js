@@ -46,6 +46,11 @@ export default class Dialog extends Component {
         onStopLoading={this.props.onStopLoading}
         onSync={this.props.onSync}
         onError={this.props.onError}
+        isSaved={this.props.isSaved}
+        savedAt={this.props.savedAt}
+        onSave={this.props.onSave}
+        selectedView={this.props.selectedView}
+        setView={this.props.setView}
       />
     )
   }

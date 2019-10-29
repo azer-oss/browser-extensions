@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Kozmos: Beautiful New Tab with Quick Search",
   "description": "A minimal and beautiful new tab page with a special search feature for your history and bookmarks.",
-  "version": "8.9",
+  "version": "9.0",
   "browser_action": {
     "default_icon": "images/heart-icon.png",
     "default_title": "Kozmos",

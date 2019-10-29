@@ -3,7 +3,9 @@ import TaggingForm from "./tagging-form"
 import Input from "./input"
 import relativeDate from "relative-date"
 import debounce from "debounce-fn"
-
+import CollectionForm from "./collection-form"
+import SpeedDial from "./speed-dial"
+import tabs from "./tabs.json"
 import Icon from "./icon"
 
 export default class LikedDialog extends Component {
@@ -77,6 +79,17 @@ export default class LikedDialog extends Component {
           }
           onInput={e => this.updateTitle(e.target.value)}
         />
+        {this.renderTabs()}
+      </div>
+    )
+  }
+
+  renderTabs() {
+    const selected = this.props.selectedView
+    let body = null
+
+    if (selected === "tags") {
+      body = (
         <TaggingForm
           like={this.props.like}
           onAddTag={this.props.onAddTag}
@@ -86,11 +99,43 @@ export default class LikedDialog extends Component {
           onSync={this.props.onSync}
           onError={this.props.onError}
         />
-      </div>
-    )
+      )
+    } else if (selected === "collections") {
+      body = (
+        <CollectionForm like={this.props.like} onSave={this.props.onSave} />
+      )
+    } else {
+      body = <SpeedDial like={this.props.like} onSave={this.props.onSave} />
+    }
+
+    return [
+      <div className="tabs">
+        {tabs.map(t => (
+          <div
+            className={`tab ${selected === t.key ? "selected" : ""}`}
+            onClick={() => this.props.setView(t.key)}
+          >
+            {t.title}
+          </div>
+        ))}
+      </div>,
+      body
+    ]
   }
 
   renderLikedAgo() {
+    if (this.props.isSaved === false) {
+      return <div className="liked-ago">Saving...</div>
+    }
+
+    if (this.props.isSaved === true) {
+      return (
+        <div className="liked-ago">
+          Saved {relativeDate(this.props.savedAt)}.
+        </div>
+      )
+    }
+
     return (
       <div className="liked-ago">
         Liked {relativeDate(this.props.like.createdAt)}.

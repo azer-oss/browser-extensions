@@ -14,7 +14,11 @@ export default class Autocomplete extends Rows {
   }
 
   shouldBeOpen(query) {
-    return query.length > 0 && query.indexOf("tag:") === -1
+    return (
+      query.length > 0 &&
+      query.indexOf("tag:") === -1 &&
+      query.indexOf("in:") === -1
+    )
   }
 
   fetch(query) {

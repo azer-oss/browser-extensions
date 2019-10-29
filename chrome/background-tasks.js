@@ -23,8 +23,12 @@ export default class BackgroundTasks extends RemoteTasks {
     this.name = "kozmos:background"
     this.map({
       "get-local-bookmarks": this.getLocalBookmarks,
+      "get-collections": this.promise(this.getCollections),
       "get-recent-bookmarks": this.promise(this.getRecentBookmarks),
       "get-bookmarks-by-tag": this.promise(this.getBookmarksByTag),
+      "get-bookmarks-by-collection": this.promise(
+        this.getBookmarksByCollection
+      ),
       "search-bookmarks": auth.requiresAuth(this.searchBookmarks),
       autocomplete: this.promise(this.autocomplete),
       "get-tags-of-bookmark": this.promise(this.getTagsOfBookmark),
@@ -43,11 +47,29 @@ export default class BackgroundTasks extends RemoteTasks {
       "get-settings-value": this.getSettingsValue,
       "set-settings-value": this.setSettingsValue,
       "suggest-tags": this.promise(this.suggestTags),
-      "list-settings": this.getListOfSettings
+      "suggest-collections": this.promise(this.suggestCollections),
+      "list-settings": this.getListOfSettings,
+      "set-selected-view": this.setSelectedView,
+      "get-selected-view": this.getSelectedView,
+      "add-to-collection": this.addToCollection,
+      "remove-from-collection": this.removeFromCollection,
+      "get-collections-of-url": this.getCollectionsOfUrl,
+      "get-recent-collections": this.getRecentCollections,
+      "get-speed-dial": this.getSpeedDial,
+      "list-speed-dials": this.listSpeedDials,
+      "search-speed-dials": this.searchSpeedDials,
+      "add-to-speed-dial": this.addToSpeedDial,
+      "remove-speed-dial": this.removeSpeedDial,
+      "get-current-speed-dial": this.getCurrentSpeedDial
     })
 
     onError((err, action) => {
-      console.log("Database error during %s: %s", action, err)
+      console.error("Database Error:", action, err)
+      console.error(err.message)
+      console.error(err.stack)
+      setImmediate(() => {
+        throw err
+      })
     })
 
     onPostUpdates(() => (this.lastPostedUpdatesAt = Date.now()))
@@ -74,9 +96,63 @@ export default class BackgroundTasks extends RemoteTasks {
     return { content }
   }
 
+  async getCollections(msg) {
+    const content = await db.listCollections()
+    const mapped = await Promise.all(
+      content.map(async c => {
+        const content = await db.listByCollection(c.title)
+        const result = Object.assign({}, c)
+        result.isEmpty = content.length === 0
+        return result
+      })
+    )
+
+    const filtered = mapped.filter(c => !c.isEmpty)
+
+    return { content: filtered }
+  }
+
   async getBookmarksByTag(msg) {
     const content = await db.listByTag(msg.content.tag, { limit: 25 })
     return { content }
+  }
+
+  async getBookmarksByCollection(msg) {
+    const content = await db.listByCollection(msg.content.collection, {
+      limit: msg.content.limit,
+      offset: msg.content.offset
+    })
+
+    const mapped = await Promise.all(content.map(c => db.get(c.url)))
+
+    if (msg.content.filter) {
+      let filtered = mapped.filter(
+        m =>
+          m.title.includes(msg.content.filter) ||
+          m.cleanTitle.includes(msg.content.filter) ||
+          m.url.includes(msg.content.filter)
+      )
+
+      if (
+        mapped.length === msg.content.limit &&
+        filtered.length < msg.content.limit
+      ) {
+        const additional = await this.getBookmarksByCollection({
+          content: {
+            filter: msg.content.filter,
+            collection: msg.content.collection,
+            limit: mapped.length - filtered.length,
+            offset: msg.content.offset + msg.content.limit
+          }
+        })
+
+        return { content: filtered.concat(additional.content) }
+      }
+
+      return { content: filtered }
+    }
+
+    return { content: mapped }
   }
 
   async addTags(msg) {
@@ -176,6 +252,13 @@ export default class BackgroundTasks extends RemoteTasks {
     return { suggestions }
   }
 
+  async suggestCollections(msg) {
+    const query = msg.content.query
+    const rows = await db.searchCollections(query)
+
+    return { suggestions: rows }
+  }
+
   getLocalBookmarks(msg) {
     localBookmarks.all((error, content) => {
       this.reply(msg, { content, error })
@@ -244,6 +327,75 @@ export default class BackgroundTasks extends RemoteTasks {
 
   listenForMessages() {
     chrome.runtime.onMessage.addListener(msg => this.onReceive(msg))
+  }
+
+  setSelectedView(msg) {
+    localStorage["selected-view"] = msg.content.selectedView
+    this.reply(msg, { selectedView: msg.content })
+  }
+
+  getSelectedView(msg) {
+    this.reply(msg, { selectedView: localStorage["selected-view"] })
+  }
+
+  async addToCollection(msg) {
+    await db.addToCollection({
+      collection: msg.content.collection,
+      url: msg.content.url
+    })
+
+    this.reply(msg, { ok: true })
+  }
+
+  async removeFromCollection(msg) {
+    await db.removeFromCollection(msg.content.url, msg.content.collection)
+    this.reply(msg, { ok: true })
+  }
+
+  async getCollectionsOfUrl(msg) {
+    const collections = await db.getCollectionsOfUrl(msg.content.url)
+    this.reply(msg, { collections })
+  }
+
+  async getRecentCollections(msg) {
+    const collections = await db.getRecentCollections()
+    this.reply(msg, { collections })
+  }
+
+  async getCurrentSpeedDial(msg) {
+    const speedDial = await db.getSpeedDialByUrl(msg.content.url)
+    this.reply(msg, { speedDial })
+  }
+
+  async getSpeedDial(msg) {
+    const speeddial = await db.getSpeedDialByKey(msg.content.key)
+    let bookmark = undefined
+
+    if (speeddial) {
+      bookmark = await db.get(speeddial.url)
+    }
+
+    this.reply(msg, { speeddial: bookmark })
+  }
+
+  async addToSpeedDial(msg) {
+    await db.addSpeedDial({ key: msg.content.key, url: msg.content.url })
+    this.reply(msg, { ok: true })
+  }
+
+  async removeSpeedDial(msg) {
+    await db.removeSpeedDialByUrl(msg.content.url)
+    this.reply(msg, { ok: true })
+  }
+
+  async searchSpeedDials(msg) {
+    const results = await db.searchSpeedDials(msg.content.query)
+    this.reply(msg, { results })
+  }
+
+  async listSpeedDials(msg) {
+    const results = await db.listSpeedDials()
+    this.reply(msg, { results })
   }
 
   sendMessage(msg) {

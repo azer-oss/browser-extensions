@@ -58,10 +58,14 @@ export default class Sidebar extends Component {
     return (
       <div className="sidebar">
         <div className="image">
-          <a className="link" href={this.props.selected.url}>
+          <a className="link" href={this.props.selected.url} tabindex="-1">
             <URLImage content={this.props.selected} />
             <h1>{this.props.selected.title}</h1>
-            <h2>{cleanURL(this.props.selected.url)}</h2>
+            <h2>
+              {this.props.selected.url
+                ? cleanURL(this.props.selected.url)
+                : this.props.selected.desc}
+            </h2>
           </a>
           {this.renderButtons()}
         </div>

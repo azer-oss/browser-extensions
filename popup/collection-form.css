@@ -1,0 +1,22 @@
+.collection-editor {
+  margin: 10px 20px;
+  position: relative;
+}
+
+.collection-editor .existing {
+  font-size: 14px;
+  color: #333;
+  padding: 9px 1px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.collection-editor .icon {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  right: 9px;
+  top: 15px;
+  transform: rotate(90deg);
+  cursor: pointer;
+}

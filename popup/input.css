@@ -4,7 +4,6 @@
   border-radius: 3px;
   background: #fff;
   position: relative;
-
 }
 
 .search .input .icon {
@@ -27,4 +26,24 @@
 
 .search .input.light {
   border: 0;
+}
+
+.textfield {
+  padding: 5px 10px;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+.textfield input {
+  width: 100%;
+  display: inline-block;
+  outline: none;
+  border: 0;
+  font: 400 14px "Open Sans", sans-serif;
+  color: #111;
+  line-height: 30px;
+}
+
+.textfield:focus-within {
+  box-shadow: rgba(67, 90, 111, 0.14) 0px 0px 2px inset, rgb(87, 154, 217) 0px 0px 0px 1px inset, rgba(16, 112, 202, 0.14) 0px 0px 0px 3px;
 }

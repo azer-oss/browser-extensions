@@ -15,11 +15,11 @@ export default class Search extends Component {
       id: 0,
       rows: {},
       rowsAvailable: 5,
-      query: '',
+      query: "",
       focused: false
     })
 
-    this._onQueryChange = debounce(this.onQueryChange.bind(this), 50)
+    this._onQueryChange = debounce(this.onQueryChange.bind(this), 250)
   }
 
   id() {
@@ -70,15 +70,26 @@ export default class Search extends Component {
     return (
       <Content wallpaper={this.props.wallpaper} focused={this.state.focused}>
         <div className="content-inner">
-          {this.props.enableGreeting ? <Greeting name={this.state.username} messages={this.messages} /> : null}
-          <SearchInput onPressEnter={() => this.onPressEnter()}
+          {this.props.enableGreeting ? (
+            <Greeting name={this.state.username} messages={this.messages} />
+          ) : null}
+          <SearchInput
+            onPressEnter={() => this.onPressEnter()}
             onQueryChange={this._onQueryChange}
             onFocus={() => this.onFocus()}
             onBlur={() => this.onBlur()}
             value={this.state.query}
-            />
-            <Results recentBookmarksFirst={this.props.recentBookmarksFirst} nextWallpaper={this.props.nextWallpaper} prevWallpaper={this.props.prevWallpaper} openTag={tag => this._onQueryChange('tag:' + tag)} focused={this.state.focused} query={this.state.query} />
-            <div className="clear"></div>
+          />
+          <Results
+            recentBookmarksFirst={this.props.recentBookmarksFirst}
+            nextWallpaper={this.props.nextWallpaper}
+            prevWallpaper={this.props.prevWallpaper}
+            openTag={tag => this._onQueryChange("tag:" + tag)}
+            openCollection={tag => this._onQueryChange("in:" + tag)}
+            focused={this.state.focused}
+            query={this.state.query}
+          />
+          <div className="clear" />
         </div>
       </Content>
     )
@@ -87,13 +98,11 @@ export default class Search extends Component {
   renderResults() {
     return (
       <div className="results">
-        <div className="results-rows">
-        </div>
-        <div className="clear"></div>
+        <div className="results-rows" />
+        <div className="clear" />
       </div>
     )
   }
-
 }
 
 function sortLikes(a, b) {

@@ -1,7 +1,3 @@
-.tagging-form {
-  margin: 15px 0;
-}
-
 .tagging-form h3 {
   font: 12px "PT Mono", sans-serif;
   text-transform: uppercase;
@@ -19,9 +15,6 @@
 
 .tag-editor {
   margin: 10px 20px;
-  padding: 5px 10px;
-  background: #fff;
-  border: 1px solid #eee;
 }
 
 .tag-editor .tags {
@@ -66,32 +59,32 @@
   outline: none;
   border: 0;
   font: 400 14px "Open Sans", sans-serif;
-  color: #444;
+  color: #111;
   line-height: 30px;
 }
 
-.tag-editor .suggestions {
-  width: calc(100% + 20px);
+.selectfield .suggestions {
+  width: calc(100% + 18px);
   list-style: none;
-  margin: 10px 0 -10px -10px;
+  margin: 10px 0 -3px -9px;
   padding: 0;
   background: #f8f8f8;
   color: #555;
   font: 400 14px "Open Sans", sans-serif;
 }
 
-.tag-editor .suggestions li {
+.textfield .suggestions li {
   padding: 10px 23px 10px 10px;
   cursor: pointer;
   position: relative;
 }
 
-.tag-editor .suggestions li.selected {
+.textfield .suggestions li.selected {
   background-color: #f2f2f2;
   color: #333;
 }
 
-.tag-editor .suggestions li a {
+.textfield .suggestions li a {
   position: absolute;
   top: calc(50% - 7px);
   right: 5px;
@@ -100,6 +93,6 @@
   background: no-repeat center url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' color='%2387929D'%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 11l4-4-4-4'/%3E%3C/svg%3E");
 }
 
-.tag-editor .suggestions li a:hover {
+.textfield .suggestions li a:hover {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' color='%232F3941'%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 11l4-4-4-4'/%3E%3C/svg%3E");
 }
