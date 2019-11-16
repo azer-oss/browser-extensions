@@ -1,11 +1,16 @@
 import Rows from "./rows"
 import config from "../config"
+import CollectionLinkRow from "./collection-link-row"
 
 export default class ListBookmarksByCollection extends Rows {
   constructor(results, sort) {
     super(results, sort)
     this.name = "bookmarks-by-collection"
     this.title = query => `Bookmarks in "${query.slice(3)} Collection"`
+  }
+
+  add(rows) {
+    this.results.addRows(this, rows.map(l => new CollectionLinkRow(this, l)))
   }
 
   shouldBeOpen(query) {
@@ -26,6 +31,8 @@ export default class ListBookmarksByCollection extends Rows {
   }
 
   async getBookmarksByCollection(collection, filter) {
+    this.collection = collection
+
     return new Promise((resolve, reject) => {
       this.results.messages.send(
         {

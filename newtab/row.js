@@ -1,4 +1,5 @@
 import { clean as cleanURL } from "urls"
+import titleFromURL from "title-from-url"
 
 export default class Row {
   constructor(category, { title, desc, tags, url, isMoreButton }) {
@@ -29,7 +30,7 @@ export default class Row {
   }
 
   renderTitle() {
-    return this.title
+    return this.title.trim() || titleFromURL(this.url)
   }
 
   renderDesc() {

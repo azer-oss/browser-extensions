@@ -1,3 +1,4 @@
+import titleFromURL from "title-from-url"
 import * as localBookmarks from "./local-bookmarks"
 import RemoteTasks from "../lib/remote-tasks"
 import urls from "urls"
@@ -60,7 +61,9 @@ export default class BackgroundTasks extends RemoteTasks {
       "search-speed-dials": this.searchSpeedDials,
       "add-to-speed-dial": this.addToSpeedDial,
       "remove-speed-dial": this.removeSpeedDial,
-      "get-current-speed-dial": this.getCurrentSpeedDial
+      "get-current-speed-dial": this.getCurrentSpeedDial,
+      "update-collection": this.updateCollection,
+      "delete-collection": this.deleteCollection
     })
 
     onError((err, action) => {
@@ -123,7 +126,7 @@ export default class BackgroundTasks extends RemoteTasks {
       offset: msg.content.offset
     })
 
-    const mapped = await Promise.all(content.map(c => db.get(c.url)))
+    const mapped = await Promise.all(content.map(c => addBookmarkTitle(c)))
 
     if (msg.content.filter) {
       let filtered = mapped.filter(
@@ -369,13 +372,7 @@ export default class BackgroundTasks extends RemoteTasks {
 
   async getSpeedDial(msg) {
     const speeddial = await db.getSpeedDialByKey(msg.content.key)
-    let bookmark = undefined
-
-    if (speeddial) {
-      bookmark = await db.get(speeddial.url)
-    }
-
-    this.reply(msg, { speeddial: bookmark })
+    this.reply(msg, { speeddial: await addBookmarkTitle(speeddial) })
   }
 
   async addToSpeedDial(msg) {
@@ -396,6 +393,20 @@ export default class BackgroundTasks extends RemoteTasks {
   async listSpeedDials(msg) {
     const results = await db.listSpeedDials()
     this.reply(msg, { results })
+  }
+
+  async updateCollection(msg) {
+    const results = await db.updateCollection(msg.content.titleToUpdate, {
+      title: msg.content.title,
+      description: msg.content.description
+    })
+
+    this.reply(msg, { ok: true })
+  }
+
+  async deleteCollection(msg) {
+    await db.removeCollection(msg.content.title)
+    this.reply(msg, { ok: true })
   }
 
   sendMessage(msg) {
@@ -420,4 +431,20 @@ export default class BackgroundTasks extends RemoteTasks {
       }
     }
   }
+}
+
+async function addBookmarkTitle(record) {
+  if (!record || !record.url) {
+    return record
+  }
+
+  const bookmark = await db.get(record.url)
+  if (!bookmark) {
+    return Object.assign(record, { title: titleFromURL(record.url) })
+  }
+
+  return Object.assign(bookmark, {
+    title: bookmark.title,
+    description: bookmark.description
+  })
 }

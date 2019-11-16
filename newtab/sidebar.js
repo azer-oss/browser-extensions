@@ -60,12 +60,8 @@ export default class Sidebar extends Component {
         <div className="image">
           <a className="link" href={this.props.selected.url} tabindex="-1">
             <URLImage content={this.props.selected} />
-            <h1>{this.props.selected.title}</h1>
-            <h2>
-              {this.props.selected.url
-                ? cleanURL(this.props.selected.url)
-                : this.props.selected.desc}
-            </h2>
+            <h1>{this.props.selected.renderTitle()}</h1>
+            <h2>{this.props.selected.renderDesc()}</h2>
           </a>
           {this.renderButtons()}
         </div>
@@ -74,6 +70,14 @@ export default class Sidebar extends Component {
   }
 
   renderButtons() {
+    if (this.props.selected.buttons) {
+      return (
+        <div className="buttons">
+          {this.props.selected.buttons().map(b => this.renderButton(b))}
+        </div>
+      )
+    }
+
     return (
       <div className="buttons">
         {this.renderLikeButton()}
@@ -81,6 +85,22 @@ export default class Sidebar extends Component {
         {this.props.selected.type === "top"
           ? this.renderDeleteTopSiteButton()
           : null}
+      </div>
+    )
+  }
+
+  renderButton({ title, icon, action }) {
+    const update = this.props.updateFn
+    const sendMessage = this.props.messages.send.bind(this.props.messages)
+
+    return (
+      <div
+        title={title}
+        className={`button`}
+        onClick={() => action({ update, sendMessage })}
+      >
+        <Icon name={icon} />
+        {title}
       </div>
     )
   }
