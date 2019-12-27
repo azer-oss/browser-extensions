@@ -2,7 +2,7 @@
 
 This is the source code of [Kozmos](http://getkozmos.com)' browser extensions. 
 
-![](https://cldup.com/Zysda2MmFJ.png)
+![](https://cldup.com/nrk7XgbqdA.png)
 
 ## Commands
 
